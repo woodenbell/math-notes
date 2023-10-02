@@ -1367,11 +1367,344 @@ $$U^S \flat^S \#^R \#^T (fx)$$
 
 \noindent hence $fx = gx$ but $x$ is epi.
 
+
+
+\section{Indexed monads}
+
+In the $2$-category of $\mathcal{S}$-indexed categories, as in any, one can define monads. In fact, one can speak of algebras (since the monad is a functor):
+
+\begin{definition}
+	Let $\mathbb{T}$ be a monad on $\mathbb{C}$. Then we have an indexed category of $\mathbb{T}$-algebras $\mathbb{C}^\mathbb{T}$ whose $I$-component is $(C^I)^{T^I}$ and whose transition functors $x^\ast$ act in the obvious way. This functor has domain in $T^J$-algebras, which follows from the fact $\eta, \mu$ are indexed transformations:
+	
+	\[\begin{tikzcd}
+		{x^\ast A} && {T^J x^\ast A} && {{T^J}^2 x^\ast A} && {x^\ast {T^I}^2 A} && {T^J x^\ast A} \\
+		&& {x^\ast T^I A} &&&&&& {x^\ast T^I A} \\
+		\\
+		&& {x^\ast A} && {T^J x^\ast A} && {x^\ast T^I A} && {x^\ast A}
+		\arrow["{x^\ast a}", from=2-3, to=4-3]
+		\arrow["{{T^x}^{-1}_A}", from=1-3, to=2-3]
+		\arrow["{\eta^J_{x^\ast A}}", from=1-1, to=1-3]
+		\arrow["{x^\ast \eta^I_A}"{description}, from=1-1, to=2-3]
+		\arrow[no head, from=1-1, to=4-3]
+		\arrow["{\mu^J_{x^\ast A}}"', from=1-5, to=4-5]
+		\arrow["{x^\ast a}", from=2-9, to=4-9]
+		\arrow["{{T^x}^{-1}_A}", from=1-9, to=2-9]
+		\arrow["{{T^x}^{-1}_A}"', from=4-5, to=4-7]
+		\arrow["{x^\ast a}"', from=4-7, to=4-9]
+		\arrow["{{{T^x}^2}^{-1}_A}", from=1-5, to=1-7]
+		\arrow["{x^\ast \mu^I_A}", from=1-7, to=4-7]
+		\arrow[from=1-7, to=1-9]
+	\end{tikzcd}\]
+	
+	Furthermore, we have a forgetful indexed functor and a forgetful free functor $F$, which is an indexed functor since multiplication is an indexed transformation:
+	
+	\[\begin{tikzcd}
+		{T^J x^\ast T^I A} &&& {{T^J}^2 x^\ast A} \\
+		{x^\ast {T^I}^2 A} \\
+		\\
+		{x^\ast T^I A} &&& {T^J x^\ast A}
+		\arrow["{x^\ast \mu^I_A}", from=2-1, to=4-1]
+		\arrow["{{T^x}^{-1}_{TA}}", from=1-1, to=2-1]
+		\arrow["{T^x_A}"', from=4-1, to=4-4]
+		\arrow["{\mu^J_{x^\ast A}}", from=1-4, to=4-4]
+		\arrow["{T^J T^x_A}", from=1-1, to=1-4]
+		\arrow["{{T^2}^x_A}"', from=2-1, to=1-4]
+	\end{tikzcd}\]
+	
+	We have (noting $F^x = T^x$)
+	
+	\begin{align*}
+		\epsilon^J_{x^\ast (A, a)} \circ (FU)^x
+		\\ = [x^\ast a \circ {T^x}^{-1}_A] \circ F^J U^x \circ F^x_{U^I}
+		\\ = [x^\ast a] = x^\ast \epsilon^I_{(A, a)}
+	\end{align*}
+	
+	\noindent hence $F \dashv U$ in the indexed sense.
+\end{definition}
+
+Analogously to the non-indexed case, we have:
+
+\begin{theorem}
+	Let $\mathbb{T}$ be an indexed monad on $\mathbb{C}$.
+	
+	\begin{enumerate}[i)]
+		\item If $\mathbb{C}$ has $\mathcal{S}$-indexed products, so does $\mathbb{C}^\mathbb{T}$, and those are preserved by the forgetful functor $U$
+		
+		\item \item If $\mathbb{C}$ has $\mathcal{S}$-indexed coproducts which are preserved by $\mathbb{T}$, so does $\mathbb{C}^\mathbb{T}$, and those are preserved by the forgetful functor $U$
+	\end{enumerate}
+\end{theorem}
+\begin{proof}
+	i): We define $\Pi_x$ as taking $T^I A \to A$ to $T^J \Pi_x A \to \Pi_x T^I A \to \Pi_x A$, where the first arrow is obtained as the mate of $x^\ast T^J \cong T^I x^\ast$. It's easy to see by taking mates in the modification diagrams that we can imitate the same argument to show the resulting arrow has algebra structure. The unity and counit are lifted from the base category and so is the Beck-Chevalley condition.
+	
+	ii): Analogous to the previous argument, but this time we need that $T$ commutes with $\Sigma_x$ since it cannot simply be obtained by mates due to the direction.
+\end{proof}
+
 Packing together everything we've proved thus far, we have:
 
 \begin{theorem}
-    Let $\mathbb{D}$ be a $\mathcal{S}$-complete (resp. cocomplete) category. Then in the canonical $\mathrm{Cat}{(\mathcal{S})}$-indexing of $\mathbb{D}$, the transition functors have right (resp.left) adjoints. In particular, we have limit (colimit) functors $\mathrm{lim}_{\mathbb{C}}: \mathbb{D}^\mathbb{C} \to \mathbb{D}$
+	Let $\mathbb{D}$ be a $\mathcal{S}$-complete (resp. cocomplete) category. Then in the canonical $\mathrm{Cat}{(\mathcal{S})}$-indexing of $\mathbb{D}$, the category has indexed finite (co) limits, and the transition functors have right (resp.left) adjoints. In particular, we have limit (colimit) functors $\mathrm{lim}_{\mathbb{C}}: \mathbb{D}^\mathbb{C} \to \mathbb{D}$. Furthermore, $\mathbb{D}^\mathbb{C}$ has $\mathcal{S}$-indexed (co) products.
 \end{theorem}
+\begin{proof}
+	The last statement follows directly from the previous result. Furthermore, the comonad constructed in section 5 preserves all finite limits, hence the co-forgetful functor creates them, hence $D^T \simeq D^\mathbb{C}$ has all finite limits, hence we can apply the adjoint lifting theorem proved in the previous section.
+	 
+	Finally, due to the Beck-Chevalley conditio, each monad of $D^{\mathbb{C} \times I}$ over $D^{C_0 \times I}$ assembles into an indexed comonad. Let $T^I = \Pi_{d_0 \times I} {(d_1 \times I)}^\ast$. Firstly, note that we have
+	
+	\[\begin{tikzcd}
+		{(C_0 \times x)^\ast \Pi_{d_0 \times I} (d_1 \times I)^\ast} && {\Pi_{d_0 \times J} (C_1 \times x)^\ast (d_1 \times I)^\ast} \\
+		\\
+		&& {\Pi_{d_0 \times J} (d_1 \times J)^\ast (C_0 \times x)^\ast }
+		\arrow[from=1-1, to=1-3]
+		\arrow["{\Pi_{d_0 \times J} \phi}", from=1-3, to=3-3]
+		\arrow["{T^x}"', from=1-1, to=3-3]
+	\end{tikzcd}\]
+	
+	\noindent where the last arrow is induced by the usual coherence isos and the first by applying Beck-Chevalley to
+	
+	\[\begin{tikzcd}
+		{C_1 \times J} && {C_1 \times I} \\
+		\\
+		{C_0 \times J} && {C_0 \times I}
+		\arrow["{d_0 \times 1}"', from=1-1, to=3-1]
+		\arrow["{1 \times x}"', from=3-1, to=3-3]
+		\arrow["{d_0 \times 1}", from=1-3, to=3-3]
+		\arrow["{1 \times x}", from=1-1, to=1-3]
+		\arrow["\lrcorner"{anchor=center, pos=0.125}, draw=none, from=1-1, to=3-3]
+	\end{tikzcd}\]
+	
+	Thus we have an indexed comonad $\mathbb{T}$. Now, we verify the unit $\eta$ is an indexed transformation:
+	
+	\[\begin{tikzcd}[column sep=small]
+		{(C_0 \times x)^\ast \Pi_{d_0 \times I} (d_1 \times I)^\ast} &&& {(C_0 \times x)^\ast \Pi_{d_0 \times I} \Pi_{i \times I} (i \times I)^\ast (d_1 \times I)^\ast } \\
+		{\Pi_{d_0 \times J} (C_1 \times x)^\ast (d_1 \times I)^\ast} && {\Pi_{d_0 \times J} (C_1 \times x)^\ast \Pi_{i \times I} (i \times I)^\ast (d_1 \times I)^\ast} \\
+		\\
+		\\
+		&& {\Pi_{d_0 \times J} \Pi_{i \times J} (i \times J)^\ast (C_1 \times x)^\ast (d_1 \times I)^\ast} \\
+		\\
+		{\Pi_{d_0 \times J} (d_1 \times J)^\ast (C_0 \times x)^\ast } && {\Pi_{d_0 \times J} \Pi_{i \times J} (i \times J)^\ast (d_1 \times J)^\ast (C_0 \times x)^\ast } & {(C_0 \times x)^\ast }
+		\arrow["{\text{B-C}}", from=1-1, to=2-1]
+		\arrow["{\Pi_{d_0 \times J} \phi}"', from=2-1, to=7-1]
+		\arrow[""{name=0, anchor=center, inner sep=0}, "{\Pi_{d_0 \times J} \eta^{i \times J}_{(d_1 \times J)^\ast (C_0 \times x)^\ast }}"', from=7-1, to=7-3]
+		\arrow["{(\Theta^{-1} \psi \ast \theta^{-1} \phi)_{(C_0 \times x)^\ast }}"', from=7-3, to=7-4]
+		\arrow["{(C_0 \times x)^\ast \Pi_{d_0 \times I} \eta^{i \times I}_{(d_1 \times J)^\ast}}", from=1-1, to=1-4]
+		\arrow[""{name=1, anchor=center, inner sep=0}, "{(C_0 \times x)^\ast  (\Theta^{-1} \psi \ast \theta^{-1} \phi)}", from=1-4, to=7-4]
+		\arrow[from=2-1, to=2-3]
+		\arrow[from=1-4, to=2-3]
+		\arrow[""{name=2, anchor=center, inner sep=0}, from=2-1, to=5-3]
+		\arrow[""{name=3, anchor=center, inner sep=0}, "{\phi \circ\text{B-C}}", from=2-3, to=5-3]
+		\arrow[from=5-3, to=7-3]
+		\arrow["{\mathbf{A}}"{description}, draw=none, from=2, to=2-3]
+		\arrow["{\mathbf{B}}"', draw=none, from=2, to=0]
+		\arrow["{\mathbf{C}}"', draw=none, from=3, to=1]
+	\end{tikzcd}\]
+	
+	Starting by triangle $\mathbf{A}$, we have
+	
+	\[\begin{tikzcd}
+		{C^K} && {C^I} && {\Pi_a z^\ast b^\ast} && {\Pi_a z^\ast \Pi_w w^\ast b^\ast} \\
+		&&& \rightarrow \\
+		{C^L} && {C^J} && {\Pi_a \Pi_x x^\ast z^\ast b^\ast} && {\Pi_a \Pi_x y^\ast w^\ast b^\ast}
+		\arrow[from=1-5, to=3-5]
+		\arrow[from=1-5, to=1-7]
+		\arrow[from=1-7, to=3-7]
+		\arrow[from=3-7, to=3-5]
+		\arrow["{\Pi_w}"', from=1-1, to=3-1]
+		\arrow["{z^\ast}"', from=3-1, to=3-3]
+		\arrow["{y^\ast}", from=1-1, to=1-3]
+		\arrow["{\Pi_x}", from=1-3, to=3-3]
+	\end{tikzcd}\]
+	
+	\noindent which is really easy and short to verify.The square $\mathbf{B}$ is even easier, just straightforward naturality. Finally, for $\mathbf{C}$, we apply the argument of $\mathbf{A}$, using glued pullbacks and considering the case of $\eta^1$, which is invertible and whose inverse is precisely the iso arrows at the bottom right.
+	
+	Now, for $\mu$, we have a diagram whose left half is
+	
+	\[\begin{tikzcd}[column sep=tiny]
+		{(C_0 \times x)^\ast \Pi_{d_0 \times J}(d_1 \times J)^\ast} && {(C_0 \times x)^\ast \Pi_{d_0 \times J} \Pi_{c \times J} (c \times J)^\ast (d_1 \times J)^\ast} && {(C_0 \times x)^\ast \Pi_{d_0 \times J} \Pi_{p_0 \times J} (p_1 \times J)^\ast (d_1 \times J)^\ast} \\
+		\\
+		&&&& {\Pi_{d_0 \times I} (C_1 \times x)^\ast \Pi_{p_0 \times J} (p_1 \times J)^\ast (d_1 \times J)^\ast} \\
+		\\
+		{\Pi_{d_0 \times I} (C_1 \times x)^\ast (d_1 \times J)^\ast } && {\Pi_{d_0 \times I} (C_1 \times x)^\ast \Pi_{c \times J} (c \times J)^\ast(d_1 \times J)^\ast } \\
+		\\
+		&&&& {\Pi_{d_0 \times I} \Pi_{p_0 \times I} (p_1 \times I)^\ast (C_1 \times x)^\ast (d_1 \times J)^\ast} \\
+		\\
+		{\Pi_{d_0 \times I} (d_1 \times I)^\ast (C_0 \times x)^\ast} && {\Pi_{d_0 \times I} \Pi_{c \times I} (c \times I)^\ast (d_1 \times I)^\ast (C_0 \times x)^\ast} && {\Pi_{d_0 \times I} \Pi_{p_0 \times I} (p_1 \times I)^\ast (d_1 \times I)^\ast (C_0 \times x)^\ast}
+		\arrow[from=1-1, to=1-3]
+		\arrow[from=1-3, to=1-5]
+		\arrow["{\text{B-C}_{(d_1 \times J)^\ast}}"', from=1-1, to=5-1]
+		\arrow["{\Pi_{d_0 \times I} \phi}"', from=5-1, to=9-1]
+		\arrow[from=9-1, to=9-3]
+		\arrow[from=9-3, to=9-5]
+		\arrow[from=5-1, to=5-3]
+		\arrow[from=1-3, to=5-3]
+		\arrow[""{name=0, anchor=center, inner sep=0}, "{\text{B-C}}", from=5-3, to=9-3]
+		\arrow["{\text{B-C}_{\Pi_{p_0 \times J} (p_1 \times J)^\ast (d_1 \times J)^\ast}}", from=1-5, to=3-5]
+		\arrow[from=3-5, to=7-5]
+		\arrow[from=7-5, to=9-5]
+		\arrow["{\mathbf{A}}"{description}, draw=none, from=9-1, to=5-3]
+		\arrow["{\mathbf{B}}"{pos=0.6}, draw=none, from=0, to=3-5]
+	\end{tikzcd}\]
+	
+	\noindent and right half is
+	
+	\[\begin{tikzcd}
+		{(C_0 \times x)^\ast \Pi_{d_0 \times J} \Pi_{p_0 \times J} (p_1 \times J)^\ast (d_1 \times J)^\ast} && {(C_0 \times x)^\ast \Pi_{d_0 \times J} (d_1 \times J)^\ast \Pi_{d_0 \times J} (d_1 \times J)^\ast} \\
+		\\
+		{\Pi_{d_0 \times I} (C_1 \times x)^\ast \Pi_{p_0 \times J} (p_1 \times J)^\ast (d_1 \times J)^\ast} && {\Pi_{d_0 \times I} (C_1 \times x)^\ast (d_1 \times J)^\ast \Pi_{d_0 \times J} (d_1 \times J)^\ast} \\
+		\\
+		&& {\Pi_{d_0 \times I} (d_1 \times I)^\ast (C_0 \times x)^\ast \Pi_{d_0 \times J} (d_1 \times J)^\ast} \\
+		\\
+		{\Pi_{d_0 \times I} \Pi_{p_0 \times I} (p_1 \times I)^\ast (C_1 \times x)^\ast (d_1 \times J)^\ast} && {\Pi_{d_0 \times I} (d_1 \times I)^\ast \Pi_{d_0 \times I} (C_1 \times x)^\ast (d_1 \times J)^\ast} \\
+		\\
+		{\Pi_{d_0 \times I} \Pi_{p_0 \times I} (p_1 \times I)^\ast (d_1 \times I)^\ast (C_0 \times x)^\ast} && {\Pi_{d_0 \times I} (d_1 \times I)^\ast \Pi_{d_0 \times I} (d_1 \times I)^\ast (C_0 \times x)^\ast }
+		\arrow[from=1-1, to=1-3]
+		\arrow["{\text{B-C}_{(d_1 \times J)^\ast \Pi_{d_0 \times J} (d_1 \times J)^\ast}}", from=1-3, to=3-3]
+		\arrow["{\Pi_{d_0 \times I} \phi_{\Pi_{d_0 \times J} (d_1 \times J)^\ast}}", from=3-3, to=5-3]
+		\arrow[""{name=0, anchor=center, inner sep=0}, "{\Pi_{d_0 \times I} (d_1 \times I)^\ast \text{B-C}_{(d_1 \times J)^\ast}}", from=5-3, to=7-3]
+		\arrow["{\Pi_{d_0 \times I} (d_1 \times I)^\ast \Pi_{d_0 \times I} \phi}", from=7-3, to=9-3]
+		\arrow[from=9-1, to=9-3]
+		\arrow[from=3-1, to=3-3]
+		\arrow["{\text{B-C}_{\Pi_{p_0 \times J} (p_1 \times J)^\ast (d_1 \times J)^\ast}}", from=1-1, to=3-1]
+		\arrow[from=7-1, to=7-3]
+		\arrow[from=3-1, to=7-1]
+		\arrow[from=7-1, to=9-1]
+		\arrow["{\mathbf{C}}"'{pos=0.4}, draw=none, from=3-1, to=0]
+	\end{tikzcd}\]
+	
+	For $\mathbf{A}$, it is the same as for $\mathbf{A}$ in the previous diagram. For $\mathbf{B}$, it is easily seen that the Beck-Chevalley iso satisfies a vertical gluing coherence condition:
+	
+	\[\begin{tikzcd}
+		& {C^C} && {C^A} &&& {z^\ast \Pi_y \Pi_k} && {\Pi_x w^\ast \Pi_k} && {\Pi_x \Pi_u v^\ast} \\
+		\\
+		{C^D} & {C^D} && {C^B} & {C^B} && {z^\ast \Pi_l \Pi_j} && {\Pi_f w^\ast \Pi_j} && {\Pi_f \Pi_e z^\ast} \\
+		\\
+		& {C^F} && {C^E}
+		\arrow["{w^\ast}", from=3-2, to=3-4]
+		\arrow["{\Pi_u}", from=1-4, to=3-4]
+		\arrow["{v^\ast}", from=1-2, to=1-4]
+		\arrow["{\Pi_k}"', from=1-2, to=3-2]
+		\arrow[shorten <=22pt, shorten >=22pt, Rightarrow, from=3-2, to=1-4]
+		\arrow["{\Pi_y}"', from=3-2, to=5-2]
+		\arrow["{z^\ast}"', from=5-2, to=5-4]
+		\arrow["{\Pi_x}", from=3-4, to=5-4]
+		\arrow[shorten <=22pt, shorten >=22pt, Rightarrow, from=5-2, to=3-4]
+		\arrow[from=1-9, to=1-11]
+		\arrow[from=1-7, to=1-9]
+		\arrow[from=3-7, to=3-9]
+		\arrow[from=3-9, to=3-11]
+		\arrow[from=1-11, to=3-11]
+		\arrow["{\Pi_e}", from=1-4, to=3-5]
+		\arrow["{\Pi_f}", from=3-5, to=5-4]
+		\arrow["{\Pi_l}"', from=3-1, to=5-2]
+		\arrow["{\Pi_j}"', from=1-2, to=3-1]
+		\arrow[Rightarrow, from=3-4, to=3-5]
+		\arrow[Rightarrow, from=3-1, to=3-2]
+		\arrow[from=1-7, to=3-7]
+	\end{tikzcd}\]
+	
+	Finally, for $\mathbf{C}$, we want to show
+	
+	\[\begin{tikzcd}
+		&&&&&& \bullet \\
+		\\
+		&& \bullet && \bullet && \bullet && \bullet \\
+		\\
+		\bullet && \bullet && \bullet && \bullet \\
+		\\
+		&& \bullet
+		\arrow["{(d_1 \times J)^\ast}"', from=5-3, to=5-5]
+		\arrow["{(C_1 \times X)^\ast}"', from=5-5, to=5-7]
+		\arrow["{\Pi_{d_0 \times J}}"', from=3-3, to=5-3]
+		\arrow["{\Pi_{p_0 \times J}}", from=3-5, to=5-5]
+		\arrow["{\Pi_{p_0 \times I}}"{description}, from=3-7, to=5-7]
+		\arrow["{(p_1 \times J)^\ast}"{description}, from=3-3, to=3-5]
+		\arrow["{(C_2 \times X)^\ast}"{description}, from=3-5, to=3-7]
+		\arrow[shorten <=22pt, shorten >=22pt, Rightarrow, from=5-3, to=3-5]
+		\arrow[shorten <=22pt, shorten >=22pt, Rightarrow, from=5-5, to=3-7]
+		\arrow["{(C_1 \times X)^\ast}"{description}, from=3-3, to=1-7]
+		\arrow[""{name=0, anchor=center, inner sep=0}, "{(p_1 \times I)^\ast}"{description}, from=1-7, to=3-7]
+		\arrow["{\Pi_{d_0 \times I}}", from=1-7, to=3-9]
+		\arrow["{(d_1 \times I)^\ast}", from=3-9, to=5-7]
+		\arrow[shorten <=10pt, shorten >=19pt, Rightarrow, from=3-7, to=3-9]
+		\arrow["{(C_0 \times X)^\ast}"{description}, from=5-3, to=7-3]
+		\arrow["{(d_1 \times I)^\ast}"{description}, from=7-3, to=5-7]
+		\arrow["{\Pi_{d_0 \times I}}"', from=5-1, to=7-3]
+		\arrow["{(C_1 \times X)^\ast}"', from=3-3, to=5-1]
+		\arrow[shorten <=14pt, shorten >=14pt, Rightarrow, from=5-1, to=5-3]
+		\arrow[shorten <=22pt, shorten >=22pt, Rightarrow, from=7-3, to=5-5]
+		\arrow[shorten <=22pt, shorten >=22pt, Rightarrow, from=3-5, to=0]
+	\end{tikzcd}\]
+	
+	\noindent that is:
+	
+	\[\begin{tikzcd}
+		&& \bullet && \bullet && \bullet && \bullet \\
+		\\
+		\bullet && \bullet && \bullet & {=} & \bullet && \bullet && \bullet \\
+		\\
+		&& \bullet && \bullet && \bullet && \bullet
+		\arrow["{\Pi_y}"', from=1-3, to=3-3]
+		\arrow["{z^\ast}"', from=3-3, to=3-5]
+		\arrow["{\Pi_x}", from=1-5, to=3-5]
+		\arrow["{w^\ast}", from=1-3, to=1-5]
+		\arrow[shorten <=22pt, shorten >=22pt, Rightarrow, from=1-5, to=3-3]
+		\arrow["{k^\ast}"', from=5-3, to=5-5]
+		\arrow["{u^\ast}", from=3-3, to=5-3]
+		\arrow["{\Pi_p}"', from=3-1, to=5-3]
+		\arrow["{q^\ast}"', from=1-3, to=3-1]
+		\arrow[shorten <=19pt, shorten >=14pt, Rightarrow, from=3-3, to=3-1]
+		\arrow["{v^\ast}", from=3-5, to=5-5]
+		\arrow[shorten <=22pt, shorten >=22pt, Rightarrow, from=3-5, to=5-3]
+		\arrow["{\Pi_p}"', from=3-7, to=5-7]
+		\arrow["{k^\ast}"', from=5-7, to=5-9]
+		\arrow["{\Pi_h}"', from=3-9, to=5-9]
+		\arrow["{l^\ast}"', from=3-7, to=3-9]
+		\arrow[shorten <=22pt, shorten >=17pt, Rightarrow, from=3-9, to=5-7]
+		\arrow["{q^\ast}"', from=1-7, to=3-7]
+		\arrow["{m^\ast}", from=1-9, to=3-9]
+		\arrow["{w^\ast}", from=1-7, to=1-9]
+		\arrow[shorten <=22pt, shorten >=17pt, Rightarrow, from=1-9, to=3-7]
+		\arrow["{\Pi_x}", from=1-9, to=3-11]
+		\arrow["{v^\ast}", from=3-11, to=5-9]
+		\arrow[shorten <=19pt, shorten >=14pt, Rightarrow, from=3-11, to=3-9]
+	\end{tikzcd}\]
+	
+	\noindent or
+	
+	\[\begin{tikzcd}
+		&&&&&&&& \bullet \\
+		\bullet && \bullet && \bullet && \bullet && \bullet && \bullet \\
+		&&&&& {=} \\
+		\bullet && \bullet && \bullet && \bullet && \bullet && \bullet \\
+		&&&&&&&& \bullet
+		\arrow["{\Pi_y}"', from=2-1, to=4-1]
+		\arrow["{k^\ast}", from=4-3, to=4-5]
+		\arrow["{u^\ast}", from=4-1, to=4-3]
+		\arrow["{\Pi_p}"', from=2-3, to=4-3]
+		\arrow["{q^\ast}", from=2-1, to=2-3]
+		\arrow[shorten <=22pt, shorten >=22pt, Rightarrow, from=4-1, to=2-3]
+		\arrow["{\Pi_h}", from=2-11, to=4-11]
+		\arrow["{l^\ast}", from=1-9, to=2-11]
+		\arrow["{q^\ast}", from=2-7, to=1-9]
+		\arrow["{m^\ast}"', from=2-9, to=2-11]
+		\arrow["{w^\ast}"', from=2-7, to=2-9]
+		\arrow[shorten <=2pt, shorten >=3pt, Rightarrow, from=2-9, to=1-9]
+		\arrow["{\Pi_x}", from=2-9, to=4-9]
+		\arrow["{v^\ast}"', from=4-9, to=4-11]
+		\arrow[shorten <=22pt, shorten >=22pt, Rightarrow, from=4-9, to=2-11]
+		\arrow["{\Pi_h}"', from=4-5, to=2-5]
+		\arrow["{l^\ast}", from=2-3, to=2-5]
+		\arrow["{z^\ast}"', from=4-7, to=4-9]
+		\arrow["{\Pi_y}"', from=2-7, to=4-7]
+		\arrow[shorten <=22pt, shorten >=22pt, Rightarrow, from=4-3, to=2-5]
+		\arrow[shorten <=22pt, shorten >=22pt, Rightarrow, from=4-7, to=2-9]
+		\arrow["{u^\ast}"', from=4-7, to=5-9]
+		\arrow["{k^\ast}"', from=5-9, to=4-11]
+		\arrow[shorten <=3pt, shorten >=2pt, Rightarrow, from=5-9, to=4-9]
+	\end{tikzcd}\]
+	
+	However, looking at the pullback digrams, we see equality holds, so it is immediate by coherence of the Beck-Chevalley iso with horizontal gluing.
+	
+	We just proved the $\eta^I, \mu^I$ assemble into modifications, so we have an indexed monad. Therefore, we can apply the previous result to conclude $\mathbb{D}^\mathbb{C}$ has indexed products. 
+\end{proof}
 
 \section{Proving the theorem}
 
