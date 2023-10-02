@@ -1,0 +1,1682 @@
+\documentclass[10pt, oneside]{article} 
+\usepackage{mathtools, amsmath, amsthm, amssymb, calrsfs, wasysym, verbatim, bbm, color, graphics, geometry, array, enumerate}
+
+\usepackage{eucal}[mathcal]
+
+\usepackage[backend=biber, style=alphabetic]{biblatex}
+\addbibresource{references.bib}
+\usepackage{quiver}
+\usepackage{bbm}
+\usepackage{abstract}
+\renewcommand{\abstractname}{}    % clear the title
+\renewcommand{\absnamepos}{empty}
+
+\geometry{tmargin=.75in, bmargin=.75in, lmargin=.75in, rmargin = .75in}  
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\Cdot}{\boldsymbol{\cdot}}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{example}[theorem]{Example}
+
+\title{The indexed adjoint functor theorem}
+\author{Gabriel C. Barbosa}
+\date{2023}
+
+\nocite{*}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+\vspace{.25in}
+
+\section{Background}
+
+We only assume familiarity with the most fundamental definitions about fibrations and indexed categories: what they are, and how they are equivalent. A reading of the first few chapters of \cite{Streicher2018} suffices.
+
+\vspace{0.5cm}
+
+\def\arraystretch{1.5}
+\begin{tabular}{ | m{5em} | m{5cm}| m{5cm} | } 
+  \hline
+  & Fibrations over $B$ & $B$-indexed categories \\ 
+  \hline
+  $0$-cells & Grothendieck fibration $X \to B$ & Pseudofunctor $B^{op} \to \mathrm{Cat}$ \\ 
+  \hline
+  $1$-cells & Cartesian functor & Pseudonatural transformation \\
+  \hline
+  $2$-cells & Vertical transformation & Modification \\
+  \hline
+\end{tabular}
+\vspace{0.5cm}
+
+The direction $\implies$ takes a cleavage inducing functors $x^\ast$ which assemble naturally into a pseudofunctor. The opposite direction takes the total category / Grothendieck construction of the pseudofunctor.
+
+For notation, we always use blackboard bold $\mathbb{C}$ for indexed categories induced by a fibration with domain $\mathcal{C}$.
+
+
+\section{Locally small and well-powered categories}
+
+To give some motivation, let $i: \mathbf{Set} \to \mathbf{Cat}$ be the discrete category functor, so for any category $\mathcal{C}$ we have an indexing induced by $X \to \mathcal{C}^{iX}$. We actually write $\mathcal{C}^I$.
+
+Let's assume $\mathcal{C}$ is locally small. Then given families $X, Y \in \mathcal{C}^I$, there's an obvious candidate hom-set $[X, Y]$ indexed by $I$ with $[X, Y]_i = [X_i, Y_i]$. Letting $p: [X, Y] \to I$, we take $p^\ast X$. We then have a canonical indexed map $\phi: p^\ast X \to p^\ast Y$ whose $f$-component is $f$. Then $[X, Y]$ being a hom-set can be expressed by the following universal property: for any $h: J \to I$, $\psi: h^\ast X \to p^\ast Y$ we have a unique factoring depicted below
+
+\[\begin{tikzcd}[ampersand replacement=\&]
+	{h^\ast X} \&\& {p^\ast X} \&\& J \&\& {[X, Y]} \\
+	\& Y \&\&\&\& I
+	\arrow[dashed, from=1-1, to=1-3]
+	\arrow["\psi"', from=1-1, to=2-2]
+	\arrow["\phi", from=1-3, to=2-2]
+	\arrow["h"', from=1-5, to=2-6]
+	\arrow["p", from=1-7, to=2-6]
+	\arrow[dashed, from=1-5, to=1-7]
+\end{tikzcd}\]
+
+It's pretty straightforward to see this: $\psi$ consists of $h^\ast X \to h^\ast Y$, that is, a $J$-indexed collection of maps $[X, Y]$, but this already gives us the map on the right, and consequently the map on the left.
+
+With the above motivation in mind, consider:
+
+\begin{definition}
+Let $P: X \to B$ be a fibration.
+
+\begin{enumerate}[i)]
+    \item Given $X, Y \in X^I$, $\operatorname{Hom}_I{(X, Y)}$ is the category whose objects are pairs
+    \[\begin{tikzcd}[ampersand replacement=\&]
+    	\& U \\
+    	X \&\& Y
+    	\arrow["\varphi"', from=1-2, to=2-1]
+    	\arrow["f", from=1-2, to=2-3]
+    \end{tikzcd}\]
+    \noindent s.t. $P(\varphi) = P(f)$ where $\varphi$ is cartesian and whose arrows are s.t.
+
+    \[\begin{tikzcd}[ampersand replacement=\&]
+	\& X \\
+	U \&\& V \\
+	\& Y
+	\arrow["\varphi", from=2-1, to=1-2]
+	\arrow["f"', from=2-1, to=3-2]
+	\arrow["{\varphi^\prime}"', from=2-3, to=1-2]
+	\arrow["g", from=2-3, to=3-2]
+	\arrow["\theta", from=2-1, to=2-3]
+    \end{tikzcd}\]
+
+    We call $P$ locally small if the fibration $\operatorname{Hom}_I{(X, Y)} \to B/I$ is representable, that is, $\operatorname{Hom}_I{(X, Y)}$ admits a terminal object.
+\end{enumerate}
+\end{definition}
+
+Have the reader read \cite{Johnstone2002}, they'll probably be familiar with a different definition:
+
+\begin{definition}
+    \begin{enumerate}[i)]
+    \item[]
+        \item If $I$ is any category, $\mathrm{Rect}(I, \mathbb{C})$ is the category of vertical diagrams (in the non-indexed sense, on the fibration domain) in $\mathbb{C}$ and transformations with cartesian components.
+
+        \item We say $\mathbb{C}$ is locally small if the forgetful functor $\mathrm{Rect}(\mathbbm{2}, \mathbb{C}) \to \mathrm{Rect}(\mathbf{2}, \mathbb{C})$ has a right adjoint.
+
+        \item More generally, we say $\mathbb{C}$ \textbf{satisfies the comprehension scheme} for $F: I \to J$ if $F^\ast: \mathrm{Rect}(J, \mathbb{C}) \to \mathrm{Rect}(I, \mathbb{C})$ has a right adjoint.
+    \end{enumerate}
+\end{definition}
+
+Expanding the second definition in terms of comma categories, we have a straightforward equivalence.
+
+\begin{definition}
+    \begin{enumerate}[i)]
+    \item[]
+        \item We write $\mathrm{Rect}_\text{mono}(I, \mathbb{C})$ for the full subcategory of $\mathrm{Rect}(I, \mathbb{C})$ whose diagrams have all arrows mono.
+
+        \item We say $\mathbb{C}$ is well-powered if each $x^\ast$ preserves monos and the codomain functor $\mathrm{Rect}_\text{mono}(\mathbbm{2}, \mathbb{C}) \to \mathrm{Rect}(\mathbf{1}, \mathbb{C})$ has a right adjoint.
+    \end{enumerate}
+\end{definition}
+
+\section{Unpacking the properties}
+
+We now consider what does it mean for an indexed category to be locally-small, well-powered, etc. Recall that in the Grothendieck fibration obtained from $\mathbb{C}$, cartesian arrows are precisely $(f, u)$ with $u$ an isomorphism.
+
+\begin{lemma}
+    An indexed category $\mathbb{C}$ is locally small iff for $X, Y$, we have $d: \mathrm{hom}(X, Y) \to I \times J, g: d_0^\ast X \to d_1^\ast Y$ s.t. for every $u: K \to I \times J$ and $f: u_0^\ast X \to u_1^\ast Y$ we have unique $v: K \to \mathrm{hom}(X, Y)$ such that $u = d \circ v$ and
+    
+    $$ f = \psi_{d, v} \circ v^\ast g \circ \psi_{d, v}^{-1} $$
+\end{lemma}
+\begin{proof}
+    \[\begin{tikzcd}[ampersand replacement=\&]
+	V \&\& X \&\&\& {u^\ast X} \\
+	\& {g^\ast X} \&\&\& X \&\& Y \\
+	\&\&\&\&\& {d^\ast X}
+	\arrow["{(g, \alpha)}", from=1-1, to=1-3]
+	\arrow["{(1, \psi_{g, 1}^{-1} \alpha)}"', from=1-1, to=2-2]
+	\arrow["{(g, 1)}"', from=2-2, to=1-3]
+	\arrow["{(d, 1)}", from=3-6, to=2-5]
+	\arrow["{(u,1)}"', from=1-6, to=2-5]
+	\arrow["{(v, k)}"{description}, dashed, from=1-6, to=3-6]
+	\arrow["{(u, f)}", from=1-6, to=2-7]
+	\arrow["{(d, g)}"', from=3-6, to=2-7]
+\end{tikzcd}\]
+\end{proof}
+
+In the same way,
+
+\begin{theorem}
+    An indexed category whose transition functors preserve monos is well-powered if given $A \in C^I$ we have $d: \mathrm{sub}(A) \to I$ and $m: X \rightarrowtail d^\ast A$ generic in the sense that for any other $m^\prime: B \to u^\ast A$ we have $d \circ v = u$ and $v^\ast m = m^\prime$ as subobjects.
+\end{theorem}
+
+Let us consider some other properties.
+
+\begin{definition}
+    \begin{enumerate}[i)]
+
+    \item[]
+    
+        \item We say $\mathbb{C}$ has definable equality if it satisfies the comprehension scheme w.r.t. the functor collapsing two parallel arrows.
+
+        \item We say $\mathbb{C}$ has definable invertibility if it satisfies the comprehension scheme w.r.t. the functor including $\mathbbm{2}$ inside its grupoid closure.
+    \end{enumerate}
+\end{definition}
+
+The following are easily proved by unpacking the right adjoint definition with comma categories:
+
+\begin{lemma}
+    \begin{enumerate}[i)]
+        \item[]
+
+        \item $\mathbb{C}$ has definable equality iff for every $f, g \in \mathcal{C}^I$ we have a subobject $I^\prime \rightarrowtail I$ s.t. every $x: J \to I$ s.t. $x^\ast f = x^\ast g$ factors through $I^\prime$.
+        
+        \item $\mathbb{C}$ has definable invertibility iff for every $f \in \mathcal{C}^I$ we have a subobject $I^\prime \rightarrowtail I$ s.t. every $x: J \to I$ s.t. $x^\ast f$ is iso factors through $I^\prime$.
+    \end{enumerate}
+\end{lemma}
+
+\begin{theorem}\label{thm:locally-small-def-eq-inv}
+    Let $\mathbb{C}$ be a $\mathcal{S}$-indexed locally small category:
+    
+    \begin{enumerate}[i)]
+        \item If $\mathcal{S}$ has equalizers, $\mathbb{C}$ has definable equality
+
+        \item If $\mathcal{S}$ also has pullbacks, $\mathbb{C}$ has definable invertibility
+    \end{enumerate}
+\end{theorem}
+\begin{proof}
+    i): Let $d: J \to I \times I$ be the arrow indexing morphisms given by $\mathbb{C}$ being locally small. Then both $f$ and $g$ correspond to arrows $I \to J$, and taking their equalizer we obtain the desired subobject.
+
+    ii): Let $f: X \to Y \in \mathcal{C}^I$ be given. Let
+
+    \[\begin{tikzcd}[ampersand replacement=\&]
+	J \&\& {\mathrm{hom}(Y, X)} \\
+	\\
+	I \&\& {I \times I}
+	\arrow[tail, from=3-1, to=3-3]
+	\arrow[from=1-3, to=3-3]
+	\arrow["x"', from=1-1, to=3-1]
+	\arrow["v", tail, from=1-1, to=1-3]
+	\arrow["\lrcorner"{anchor=center, pos=0.125}, draw=none, from=1-1, to=3-3]
+\end{tikzcd}\]
+
+    Letting $h$ be the generic such morphism, we put $g = x^\ast h$, where $h$ is the generic morphism. Then we take $K \rightarrowtail J$ to be the intersection of arrows measuring equality of $x^\ast (f) \circ g = 1, g \circ x^\ast (f)$, respectively. Then one can see that factorizations of some $y$ through $K \rightarrowtail J \rightarrow I$ correspond to inverses of $y^\ast (f)$, but by uniqueness the latter arrow is mono.
+ \end{proof}
+
+We will later use these to transfer properties from an indexed category to its comma construction.
+
+\section{Indexed (co)completeness}
+
+Through this entire section, we fix a base category $\mathcal{S}$ which we'll assume for our ends to be a topos (though it needn't be in a lot of results we'll state).
+
+\begin{definition}
+    We say $\mathbb{C}$ has $\mathcal{S}$-indexed products if every $x^\ast$ has a right adjoint $\Pi_X$, satisfying the following Beck-Chevalley condition: for every pullback square
+
+    \[\begin{tikzcd}[ampersand replacement=\&]
+	I \&\& K \\
+	\\
+	J \&\& L
+	\arrow["w", from=1-1, to=1-3]
+	\arrow["x"', from=1-1, to=3-1]
+	\arrow["z"', from=3-1, to=3-3]
+	\arrow["y", from=1-3, to=3-3]
+	\arrow["\lrcorner"{anchor=center, pos=0.125}, draw=none, from=1-1, to=3-3]
+\end{tikzcd}\]
+
+    \noindent we have a $2$-cell isomorphism
+
+    \[\begin{tikzcd}[ampersand replacement=\&]
+	{C^J} \&\& {C^I} \\
+	\\
+	{C^L} \&\& {C^K}
+	\arrow["{\Pi_y}"', from=1-1, to=3-1]
+	\arrow["{\Pi_x}", from=1-3, to=3-3]
+	\arrow["{w^\ast}", from=1-1, to=1-3]
+	\arrow["{z^\ast}"', from=3-1, to=3-3]
+	\arrow["\Phi", shorten <=22pt, shorten >=22pt, Rightarrow, from=3-1, to=1-3]
+	\arrow["\cong"', draw=none, from=3-1, to=1-3]
+\end{tikzcd}\]
+    
+    \noindent where $\Phi_A$ is the $x^\ast$-transpose of
+
+    $$x^\ast z^\ast \Pi_y A \xrightarrow[]{\cong} w^\ast y^\ast \Pi_y A \xrightarrow[]{w^\ast \epsilon^y_A} w^\ast A$$
+
+    We also have the dual definition of indexed coproducts.
+\end{definition}
+
+\begin{remark}\label{rem:unit-identities}
+    Note that due do uniqueness of adjoints we can get coherence isos $\Theta, \psi$ for $\Pi_x$, for instance, given by
+
+    $$\Theta^{-1} = \epsilon^1 \circ \theta_{\Pi_1}$$
+
+    $$\psi_{y, x} = \Pi_{yx} \epsilon^x \circ \Pi_{yx} x^\ast \epsilon^y_{\Pi_x} \circ \Pi_{yx} {\phi^{-1}_{y, x}}_{\Pi_y \Pi_x} \circ \eta^{yx}_{\Pi_y \Pi_x}$$
+
+    Which gives us
+
+    $$(\Theta^{-1} \ast \theta^{-1}) \circ \eta^1 = \theta^{-1} \circ \epsilon_{1^\ast} \circ \theta_{\Pi_1 1^\ast} \circ \eta^1 = 1$$
+    Also,
+    $$\psi_{y, x} = \Pi_{yx} \epsilon^x \circ \Pi_{yx} x^\ast \epsilon^y_{\Pi_x} \circ \Pi_{yx} {\phi^{-1}_{y, x}}_{\Pi_y \Pi_x} \circ \eta^{yx}_{\Pi_y \Pi_x}$$
+
+    so a straightforward but long and tedious calculation shows:
+    
+    \begin{align*}
+(\psi_{y, x} \ast \phi_{y, x}) \circ \Pi_y \eta^x_{y^\ast} \circ \eta^y \\ = \Pi_{yx} \phi_{y, x} \circ [(\Pi_{yx} \epsilon^x \circ \Pi_{yx} x^\ast \epsilon^y_{\Pi_x} \circ \Pi_{yx} {\phi^{-1}_{y, x}}_{\Pi_y \Pi_x} \circ \eta^{yx}_{\Pi_y \Pi_x}) \ast (x^\ast y^\ast)] \circ \Pi_y \eta^x_{y^\ast} \circ \eta^y \\
+= \Pi_{yx} \phi_{y, x} \circ [(\Pi_{yx} \epsilon^x \circ \Pi_{yx} x^\ast \epsilon^y_{\Pi_x} \circ \Pi_{yx} {\phi^{-1}_{y, x}}_{\Pi_y \Pi_x}) \ast (x^\ast y^\ast)] \circ \Pi_{yx} {(yx)}^\ast \Pi_y \eta^x_{y^\ast} \circ \eta^{yx}_{\Pi_y y^\ast} \circ \eta^y && \text{(Naturality of $\eta^{yx}$)}
+\\
+= \Pi_{yx} \phi_{y, x} \circ [(\Pi_{yx} \epsilon^x \circ \Pi_{yx} x^\ast \epsilon^y_{\Pi_x}) \ast (x^\ast y^\ast)] \circ \Pi_{yx} x^\ast y^\ast \Pi_y \eta^x_{y^\ast} \circ \Pi_{yx} {\phi^{-1}_{y, x}}_{\Pi_y y^\ast} \circ \eta^{yx}_{\Pi_y y^\ast} \circ \eta^y && \text{(Naturality of $\phi_{y, x}^{-1}$)}
+\\
+= \Pi_{yx} \phi_{y, x} \circ [(\Pi_{yx} \epsilon^x) \ast (x^\ast y^\ast)] \circ  \Pi_{yx} x^\ast \eta^x_{y^\ast} \circ \Pi_{yx} x^\ast  \epsilon^y_{y^\ast} \circ \Pi_{yx} {\phi^{-1}_{y, x}}_{\Pi_y y^\ast} \circ \eta^{yx}_{\Pi_y y^\ast} \circ \eta^y && \text{(Naturality of $\epsilon^y$)}
+\\
+= \Pi_{yx} \phi_{y, x} \circ \Pi_{yx} x^\ast  \epsilon^y_{y^\ast} \circ \Pi_{yx} {\phi^{-1}_{y, x}}_{\Pi_y y^\ast} \circ \eta^{yx}_{\Pi_y y^\ast} \circ \eta^y && \text{(Triangle identity for $x$)}
+\\
+= \Pi_{yx} \phi_{y, x} \circ \Pi_{yx} x^\ast  \epsilon^y_{y^\ast} \circ \Pi_{yx} {\phi^{-1}_{y, x}}_{\Pi_y y^\ast} \circ \Pi_{yx} {(yx)}^\ast \eta^y \circ \eta^{yx} && \text{(Naturality of $\eta^{yx}$)}
+\\
+= \Pi_{yx} \phi_{y, x} \circ \Pi_{yx} x^\ast  \epsilon^y_{y^\ast} \circ \Pi_{yx} x^\ast y^\ast \eta^y \circ \Pi_{yx} {\phi^{-1}_{y, x}}\circ  \eta^{yx} && \text{(Naturality of $\phi_{y, x}^{-1}$)}
+\\
+= \eta^{yx} && \text{(Triangle identity for $y$)}
+\end{align*}
+\end{remark}
+
+A nice characterization of the existence of internal coproducts comes from the following result:
+
+\begin{theorem}
+    Let $P: \mathcal{C} \to \mathcal{S}$ be a Grothendieck fibration.
+
+    \begin{enumerate}[i)]
+	\item Each $x^\ast$ has a left adjoint iff $P$ is an opfibration as well.
+
+        \item $\mathbb{C}$ has $\mathcal{S}$-indexed coproducts iff $P$ is an opfibration and the pullback of any cocartesian arrow along a cartesian arrow exists and is again cocartesian.
+    \end{enumerate}
+\end{theorem}
+\begin{proof}
+    \cite[Lemma B.1.4.5]{Johnstone2002}
+\end{proof}
+
+\begin{definition}
+    An indexed category $\mathbb{C}$ is $\mathcal{S}$-complete if it has $\mathcal{S}$-indexed products and $\mathcal{S}$-indexed finite limits (that is, each $C^I$ has finite limits preserved by the reindexing functors).
+\end{definition}
+
+\begin{definition}\label{def:indexed-continuous-functor}
+    We call an indexed functor between $\mathcal{S}$-complete categories $F: \mathbb{C} \to \mathbb{D}$ $\mathcal{S}$-continuous if it is component-wise complete and the mate in the right is an isomorphism as well for every $x: I \to J$:
+
+    \[\begin{tikzcd}[ampersand replacement=\&]
+	{C^J} \&\& {C^I} \&\& {C^I} \&\& {D^I} \\
+	\&\&\& \iff \\
+	{D^J} \&\& {D^I} \&\& {C^J} \&\& {D^J}
+	\arrow["{F^J}"', from=1-1, to=3-1]
+	\arrow["{x^\ast}", from=1-1, to=1-3]
+	\arrow["{x^\ast}"', from=3-1, to=3-3]
+	\arrow["{F^I}", from=1-3, to=3-3]
+	\arrow["\cong", shorten <=22pt, shorten >=22pt, Rightarrow, from=3-1, to=1-3]
+	\arrow["{\Pi_x}"', from=1-5, to=3-5]
+	\arrow["{F^I}"', from=3-5, to=3-7]
+	\arrow["{F^I}", from=1-5, to=1-7]
+	\arrow["{\Pi_x}", from=1-7, to=3-7]
+	\arrow["\cong", shorten <=22pt, shorten >=22pt, Rightarrow, from=3-5, to=1-7]
+\end{tikzcd}\]
+\end{definition}
+
+\section{Interlude: Beck-Chevalley}
+
+
+Recall we can define adjointness using the $2$-cells, which are transformations $\alpha: F \implies G$ with, for every $x: J \to I$,
+
+$${\alpha_J}_{x^\ast} \circ F^x = G^x \circ x^\ast \alpha_I$$
+
+\noindent if we unpack what it means to be a modification in this context,
+
+Thus we can define a notion of adjunction in this context, and if we do we'll end up with the following: $F \dashv G$ implies there we have componentise units and counits satisfying (recall the 2-cells are modifications)
+
+\[\begin{tikzcd}
+	{x^\ast} && {x^\ast G^I F^I} && {F^J x^\ast G^I} && {x^\ast F^I G^I} \\
+	\\
+	{G^JF^Jx^\ast} && {G^J x^\ast F^I} && {F^J G^J x^\ast} && {x^\ast}
+	\arrow["{\eta^J_{x^\ast}}"', from=1-1, to=3-1]
+	\arrow["{( G^JF^x )^{-1}}"', from=3-1, to=3-3]
+	\arrow["{x^\ast \eta^I}", from=1-1, to=1-3]
+	\arrow["{G^x F^I}", from=1-3, to=3-3]
+	\arrow["{({F^x}_{G^J})^{-1}}", from=1-5, to=1-7]
+	\arrow["{F^I G^x}"', from=1-5, to=3-5]
+	\arrow["{\epsilon^I x^\ast}"', from=3-5, to=3-7]
+	\arrow["{x^\ast \epsilon^J}", from=1-7, to=3-7]
+\end{tikzcd}\]
+
+Let us take the mate of $(F^x)^{-1}$:
+
+\[\begin{tikzcd}
+	{D^I} && {C^I} && {C^J} \\
+	\\
+	&& {D^I} && {D^J} && {C^J}
+	\arrow["{x^\ast}", from=1-3, to=1-5]
+	\arrow["{F^I}"', from=1-3, to=3-3]
+	\arrow["{x^\ast}"', from=3-3, to=3-5]
+	\arrow["{F^J}", from=1-5, to=3-5]
+	\arrow["{(F^x)^{-1}}"', shorten <=22pt, shorten >=22pt, Rightarrow, from=1-5, to=3-3]
+	\arrow[from=1-1, to=1-3]
+	\arrow[""{name=0, anchor=center, inner sep=0}, no head, from=1-1, to=3-3]
+	\arrow[from=3-5, to=3-7]
+	\arrow[""{name=1, anchor=center, inner sep=0}, from=1-5, to=3-7]
+	\arrow["{\epsilon^I}"', shorten <=8pt, shorten >=8pt, Rightarrow, from=1-3, to=0]
+	\arrow["{\eta^J}", shorten <=8pt, shorten >=8pt, Rightarrow, from=1, to=3-5]
+\end{tikzcd}\]
+
+We get
+
+
+\begin{align*}
+         G^J x^\ast \epsilon^I \circ G^J (F^x)^{-1} G^I \circ \eta^J x^\ast G^I \\
+         = G^J x^\ast \epsilon^I \circ G^x F^I G^I \circ x^\ast \eta^I G^I && \text{(by using the identities above)} \\
+         = G^x \circ x^\ast G^I \epsilon^I \circ x^\ast \eta^I G^I && \text{(naturality of $G^x$)} \\
+         = G^I  && \text{(functoriality and triangle identities)} \\
+\end{align*}
+
+Does converse hold? Yes, as long as $(F^x)^{-1}$ is invertible.
+
+
+\begin{align*}
+         G^x F^I \circ x^\ast \eta^I 
+         \\
+         = G^J x^\ast \epsilon^I_{F^I} \circ G^J (F^x_{F^I})^{-1}  \circ \eta^J_{x^\ast G^J} \circ x^\ast \eta^I && \text{($(F^x)^{-1}$ and $G^x$ are mates)}
+         \\
+         =  G^J x^\ast \epsilon^I_{F^I} \circ G^J (F^x_{F^I})^{-1} \circ G^J F^J x^\ast \eta^I \circ \eta^J_{x^\ast}  && \text{(naturality of $\eta^J$)}
+         \\
+         =  G^J x^\ast \epsilon^I_{F^I} \circ G^J x^\ast F^I \eta^I \circ G^J (F^x_{F^I})^{-1} \circ \eta^J_{x^\ast}  && \text{(naturality of $G^J (F^x)^{-1}$)}
+         \\
+         = G^J (F^x_{F^I})^{-1} \circ \eta^J_{x^\ast}  && \text{(functoriality and triangle identities)}
+\end{align*}
+
+Now, what does Beck-Chevalley has to do with all this?
+
+Firstly, recall tha for
+
+    \[\begin{tikzcd}[ampersand replacement=\&]
+	I \&\& K \\
+	\\
+	J \&\& L
+	\arrow["w", from=1-1, to=1-3]
+	\arrow["x"', from=1-1, to=3-1]
+	\arrow["z"', from=3-1, to=3-3]
+	\arrow["y", from=1-3, to=3-3]
+	\arrow["\lrcorner"{anchor=center, pos=0.125}, draw=none, from=1-1, to=3-3]
+    \end{tikzcd}\]
+
+    \noindent we have an isomorphism given by the $x^\ast$-transpose of
+
+    $$x^\ast z^\ast \Pi_y A \xrightarrow[]{\cong} w^\ast y^\ast \Pi_y A \xrightarrow[]{w^\ast \epsilon^y_A} w^\ast A$$
+
+    \noindent which is
+
+    $$\Pi_x w^\ast \epsilon^y \circ \Pi_x {\phi^{-1}_{w, y} \phi_{x, z}}_{\Pi_y}  \circ \eta^x_{z^\ast \Pi_y}$$
+
+    \noindent that is,
+
+    \[\begin{tikzcd}
+	{C^K} && {C^L} && {C^J} \\
+	\\
+	&& {C^K} && {C^I} && {C^J}
+	\arrow["{z^\ast}", from=1-3, to=1-5]
+	\arrow["{x^\ast}", from=1-5, to=3-5]
+	\arrow["{y^\ast}"', from=1-3, to=3-3]
+	\arrow["{w^\ast}"', from=3-3, to=3-5]
+	\arrow["{\phi^{-1} \phi}"', shorten <=22pt, shorten >=22pt, Rightarrow, from=1-5, to=3-3]
+	\arrow["{\Pi_x}"', from=3-5, to=3-7]
+	\arrow[""{name=0, anchor=center, inner sep=0}, no head, from=1-5, to=3-7]
+	\arrow[""{name=1, anchor=center, inner sep=0}, from=1-1, to=3-3]
+	\arrow["{\Pi_y}", from=1-1, to=1-3]
+	\arrow["\eta", shorten <=8pt, shorten >=6pt, Rightarrow, from=0, to=3-5]
+	\arrow["\epsilon"', shorten <=8pt, shorten >=8pt, Rightarrow, from=1-3, to=1]
+\end{tikzcd}\]
+
+\noindent the mate of $\phi^{-1} \phi$.
+
+\begin{definition}
+    A comprehension category is a "cartesian" functor $Q$
+
+    \[\begin{tikzcd}[ampersand replacement=\&]
+	{\mathcal{E}} \&\& {\mathcal{S}^{\rightarrow}} \\
+	\& {\mathcal{S}}
+	\arrow["P"', from=1-1, to=2-2]
+	\arrow["{\mathrm{cod}}", from=1-3, to=2-2]
+	\arrow["Q", from=1-1, to=1-3]
+\end{tikzcd}\]
+
+    \noindent except that we don't assume $\mathcal{S}$ has pullbacks, hence $\mathrm{cod}$ is not necessarily a Grothendieck fibration, but $P$ is.
+\end{definition}
+
+\begin{definition}
+    Given a comprehension category $Q: \mathcal{E} \to \mathcal{S}^\rightarrow$ and an $\mathcal{S}$-indexed category $\mathbb{C}$ given by $F: \mathcal{S}^{op} \to \mathrm{Cat}$, $[Q]_{\mathbb{C}}$ is the indexed functor given by
+
+    \[\begin{tikzcd}[ampersand replacement=\&]
+	{\mathcal{E}^{op}} \&\& {\mathcal{S}^{op}} \&\& {\mathrm{Cat}}
+	\arrow[""{name=0, anchor=center, inner sep=0}, "{(\mathrm{cod} \circ Q)^{op}}", curve={height=-18pt}, from=1-1, to=1-3]
+	\arrow[""{name=1, anchor=center, inner sep=0}, "{(\mathrm{dom} \circ Q)^{op}}"', curve={height=18pt}, from=1-1, to=1-3]
+	\arrow["F", from=1-3, to=1-5]
+	\arrow["{({\mathrm{arr} \ast Q})^{op}}"{description}, shorten <=5pt, shorten >=5pt, Rightarrow, from=0, to=1]
+\end{tikzcd}\]
+\end{definition}
+
+Given a functor $P: \mathcal{E} \to \mathcal{S}$, we write $\mathrm{cart}{(P)}$ for the (possibly non-full) subcategory of $\mathcal{E}$ whose arrows are cartesian w.r.t. $P$. Consider thus the comprehension category $Q: \mathrm{cart}{(\mathrm{cod})} \to \mathcal{S}^\rightarrow$ and the induced indexed functor $F = [Q]_\mathbb{C}$.
+
+\begin{theorem}
+    The category $\mathbb{C}$ has $\mathcal{S}$-indexed coproducts iff $F$ has an indexed left adjoint.
+\end{theorem}
+\begin{proof}
+    We've seen above that as long as the mate of each $G^x$ satisfies invertibility and we have componentwise adjoints, we can construct an indexed left adjoint.
+
+    Let us look at the indexed functor $[Q]_\mathbb{C} = F: \mathbb{D} \to \mathbb{E}$. Let
+
+    \[\begin{tikzcd}[ampersand replacement=\&]
+	I \&\& K \\
+	\\
+	J \&\& L
+	\arrow["w", from=1-1, to=1-3]
+	\arrow["x"', from=1-1, to=3-1]
+	\arrow["z"', from=3-1, to=3-3]
+	\arrow["y", from=1-3, to=3-3]
+	\arrow["\lrcorner"{anchor=center, pos=0.125}, draw=none, from=1-1, to=3-3]
+    \end{tikzcd}\]
+    
+    \noindent be an arrow $x \to y$ in $\mathrm{cart}{(\mathrm{cod})}$.
+
+    
+    \begin{itemize}
+    
+        \item Its $x$-component is $x^\ast: C^J \to C^I$
+
+        \item $F^(w, z)$ is given by $\phi_{w, y}^{-1} \phi_{x, z}$
+    \end{itemize}
+
+    It thus follows from what has been discussed previously.
+\end{proof}
+
+As a last thing, we are going to relate the Beck-Chevalley condition to spans, so that it'll be applied in the next section
+
+\begin{remark}\label{rem:span-beck-chevalley}
+    Let $\mathbb{D}$ be an $\mathcal{S}$-complete category. Consider the category $\langle{X, Y}$ of spans
+
+    \[\begin{tikzcd}[ampersand replacement=\&]
+	S \&\& Y \\
+	\\
+	X
+	\arrow["x"', from=1-1, to=3-1]
+	\arrow["y", from=1-1, to=1-3]
+    \end{tikzcd}\]
+
+
+    \noindent with fixed endpoints, and the obvious morphism.
+
+    Then we can associate with the above span the functor $\Pi_y x^\ast: D^X \to D^Y$. In fact, we can functorially associate these by taking
+
+    \[\begin{tikzcd}[ampersand replacement=\&]
+	S \&\& Y \\
+	\& {S^\prime} \\
+	X
+	\arrow["x"', from=1-1, to=3-1]
+	\arrow["y", from=1-1, to=1-3]
+	\arrow["u", from=1-1, to=2-2]
+	\arrow["{x^\prime}", from=2-2, to=3-1]
+	\arrow["{y^\prime}", from=2-2, to=1-3]
+    \end{tikzcd}\]
+
+    \noindent to 
+
+    \[\begin{tikzcd}[ampersand replacement=\&]
+	{\Pi_{y^\prime} {x^\prime}^\ast} \&\& {\Pi_{y^\prime} \Pi_u u^\ast {x^\prime}^\ast} \&\& {\Pi_y x^\ast}
+	\arrow["{\Pi_{y^\prime} \eta^u {x^\prime}^\ast}", from=1-1, to=1-3]
+	\arrow["{\psi_{y^\prime, u} \ast \phi_{x^\prime, u}}", from=1-3, to=1-5]
+\end{tikzcd}\]
+
+    \noindent thus yielding a contravariant action.
+
+    Furthermore, given two spans in $<X, Y>, <Y, Z>$ respectively, we can form their composition in $<X, Z>$ by taking pullbacks
+
+    \[\begin{tikzcd}[ampersand replacement=\&]
+	U \&\& T \&\& Z \\
+	\\
+	S \&\& Y \\
+	\\
+	X
+	\arrow["x"', from=3-1, to=5-1]
+	\arrow["y"', from=3-1, to=3-3]
+	\arrow["w", from=1-3, to=3-3]
+	\arrow["z", from=1-3, to=1-5]
+	\arrow["s"', from=1-1, to=3-1]
+	\arrow["t", from=1-1, to=1-3]
+	\arrow["\lrcorner"{anchor=center, pos=0.125}, draw=none, from=1-1, to=3-3]
+    \end{tikzcd}\]
+
+    \noindent provided such pullback exists. Then the Beck-Chevalley condition under the action above identifies the expression with $\Pi_z w^\ast \Pi_y x^\ast$ (that is, both paths are canonically isomorphic).
+\end{remark}
+
+We actually need something more precise, and the following result will be crucial.
+
+\begin{lemma}\label{thm:beck-chevalley-fundamental-lemma}
+    Consider the following situation:
+
+    \[\begin{tikzcd}[ampersand replacement=\&]
+	D \\
+	\& C \& B \& Z \& D \&\&\& D \\
+	\& A \& Y \&\&\& B \& Z \&\& A \& Y \\
+	\& X \&\&\&\& Y \&\&\& X
+	\arrow["b", from=2-2, to=2-3]
+	\arrow["a"', from=2-2, to=3-2]
+	\arrow["x"', from=3-2, to=4-2]
+	\arrow["y"', from=3-2, to=3-3]
+	\arrow["w", from=2-3, to=3-3]
+	\arrow["z", from=2-3, to=2-4]
+	\arrow["f", from=1-1, to=2-2]
+	\arrow["u"', curve={height=12pt}, from=1-1, to=4-2]
+	\arrow["v", curve={height=-18pt}, from=1-1, to=2-4]
+	\arrow["d", from=2-2, to=3-3]
+	\arrow["bf", from=2-5, to=3-6]
+	\arrow["v", curve={height=-12pt}, from=2-5, to=3-7]
+	\arrow["df"', curve={height=12pt}, from=2-5, to=4-6]
+	\arrow["w"', from=3-6, to=4-6]
+	\arrow["z", from=3-6, to=3-7]
+	\arrow["af", from=2-8, to=3-9]
+	\arrow["df", curve={height=-12pt}, from=2-8, to=3-10]
+	\arrow["u"', curve={height=12pt}, from=2-8, to=4-9]
+	\arrow["x"', from=3-9, to=4-9]
+	\arrow["y", from=3-9, to=3-10]
+\end{tikzcd}\]
+
+Let the maps induced by the contravariant action above be denoted by $\gamma, \beta, \alpha$, respectively, and the Beck-Chevalley isomorphism by $\tau: w^\ast \Pi_y \to \Pi_b a^\ast$.
+
+Then
+
+$$\Pi_v \epsilon^{df} u^\ast \circ (\beta \ast \alpha) = \gamma\circ (\psi_{z, b} \ast \phi_{x, a}) \circ \tau $$
+\end{lemma}
+\begin{proof}
+    We have
+
+    $$\tau = \mathrm{Mate}(\phi_{y, a}^{-1} \phi_{w, b}) = \Pi_b a^\ast \epsilon^y \circ \Pi_b {\phi_{y, a}^{-1} \phi_{w, b}}_{\Pi_y} \circ \eta^b_{w^\ast \Pi_y}$$
+
+    \begin{align*}
+        \Pi_v \epsilon^{df} u^\ast \circ (\beta \ast \alpha)
+        \\ = \Pi_v \epsilon^{df} u^\ast \circ ((\psi_{z, bf} \ast \phi_{w, bf}) \circ \Pi_z \eta^{bf}_{w^\ast}) \ast ((\psi_{y, af} \ast \phi_{x, af}) \circ \Pi_y \eta^{af}_{x^\ast}))
+        \\ = \Pi_v \epsilon^{df}_{u^\ast} \circ ((\psi_{zb, f} \circ {\psi_{z, b}}_{\Pi_f} \ast \phi_{wb, f} \circ f^\ast \phi_{w, b}) \circ \Pi_z \Pi_b \eta^f_{b^\ast w^\ast} \circ \Pi_z \eta^b_{w^\ast})
+        \\ \ast ((\psi_{ya, f} \circ {\psi_{y, a}}_{\Pi_f} \ast \phi_{xa, f} \circ f^\ast \phi_{x, a}) \circ \Pi_y \Pi_a \eta^f_{a^\ast x^\ast} \circ \Pi_y \eta^{a}_{x^\ast})) && \text{(1)}
+        \\ = \Pi_v \epsilon^f_{u^\ast} \circ \Pi_v f^\ast \epsilon^d_{\Pi_f u^\ast} \circ ((\psi_{zb, f} \circ {\psi_{z, b}}_{\Pi_f} \ast f^\ast \phi_{w, b}) \circ \Pi_z \Pi_b \eta^f_{b^\ast w^\ast} \circ \Pi_z \eta^b_{w^\ast})
+        \\ \ast (({\psi_{y, a}}_{\Pi_f} \ast \phi_{xa, f} \circ f^\ast \phi_{x, a}) \circ \Pi_y \Pi_a \eta^f_{a^\ast x^\ast} \circ \Pi_y \eta^{a}_{x^\ast})) && \text{(2)}
+        \\ = \Pi_v \epsilon^f_{u^\ast} \circ \Pi_v f^\ast \epsilon^a_{\Pi_f u^\ast} \circ \Pi_v f^\ast a^\ast \epsilon^y_{\Pi_ a\Pi_f u^\ast} \circ (\psi_{zb, f} \circ {\psi_{z, b}}_{\Pi_f} \ast f^\ast \phi^{-1}_{y, a} \circ f^\ast \phi_{w, b}) \circ \Pi_z \Pi_b \eta^f_{b^\ast w^\ast} \circ \Pi_z \eta^b_{w^\ast})
+        \\ \ast (\Pi_y \Pi_a \Pi_f (\phi_{xa, f} \circ f^\ast \phi_{x, a}) \circ \Pi_y \Pi_a \eta^f_{a^\ast x^\ast} \circ \Pi_y \eta^{a}_{x^\ast})) && \text{(3)}
+        \\ = (\psi_{zb, f} \ast \phi_{xa, f}) \circ {\psi_{z, b}}_{\Pi_f f^\ast (xa)^\ast} \circ \Pi_z \Pi_b \Pi_f \epsilon^f_{f^\ast (xa)^\ast} \circ \Pi_z \Pi_b \Pi_f f^\ast \epsilon^a_{\Pi_f f^\ast (xa)^\ast} \circ \Pi_z \Pi_b \Pi_f f^\ast a^\ast \epsilon^y_{\Pi_ a\Pi_f f^\ast (xa)^\ast} \\
+        \circ (\Pi_z \Pi_b \Pi_f (f^\ast \phi^{-1}_{y, a} \circ f^\ast \phi_{w, b})) \circ \Pi_z \Pi_b \eta^f_{b^\ast w^\ast} \circ \Pi_z \eta^b_{w^\ast})
+        \\ \ast (\Pi_y \Pi_a \eta^f_{(xa)^\ast} \circ \Pi_y \Pi_a \phi_{x, a} \circ  \Pi_y \eta^{a}_{x^\ast})) && \text{(4)}
+        \\ = (\psi_{zb, f} \ast \phi_{xa, f}) \circ {\psi_{z, b}}_{\Pi_f f^\ast (xa)^\ast} \circ \Pi_z \Pi_b \Pi_f f^\ast \epsilon^a_{(xa)^\ast} \circ \Pi_z \Pi_b \Pi_f f^\ast a^\ast \epsilon^y_{\Pi_ a (xa)^\ast}
+        \\ \circ (\Pi_z \Pi_b \Pi_f (f^\ast \phi^{-1}_{y, a} \circ f^\ast \phi_{w, b})) \circ \Pi_z \Pi_b \eta^f_{b^\ast w^\ast} \circ \Pi_z \eta^b_{w^\ast}) \ast (\Pi_y \Pi_a \phi_{x, a} \circ  \Pi_y \eta^{a}_{x^\ast})) && \text{(5)}
+        \\ = [ (\psi_{zb, f} \ast \phi_{xa, f}) \circ \Pi_{zb} \eta^f_{(xa)^\ast}] \circ {\psi_{z, b}}_{(xa)^\ast} \circ \Pi_z \Pi_b \epsilon^a_{(xa)^\ast} \circ \Pi_z \Pi_b a^\ast \epsilon^y_{\Pi_ a (xa)^\ast}
+        \\ \circ (\Pi_z \Pi_b (\phi^{-1}_{y, a} \circ \phi_{w, b})) \circ \Pi_z \eta^b_{w^\ast}) \ast (\Pi_y \Pi_a \phi_{x, a} \circ  \Pi_y \eta^{a}_{x^\ast})) && \text{(6)}
+        \\ = \gamma \circ {\psi_{z, b}}_{(xa)^\ast} \circ \Pi_z \Pi_b \epsilon^a_{(xa)^\ast} \circ \Pi_z \Pi_b a^\ast \epsilon^y_{\Pi_a (xa)^\ast} \circ \Pi_z \Pi_b a^\ast y^\ast (\Pi_y \Pi_a \phi_{x, a} \circ \Pi_y \eta^{a}_{x^\ast}) \circ \Pi_z \tau_{x^\ast}
+        \\ = \gamma\circ (\psi_{z, b} \ast \phi_{x, a}) \circ \tau && \text{(7)}
+    \end{align*}
+
+
+\noindent
+(1): Expansion of $\eta^{af}, \eta^{bf}$ and iso coherence \\
+(2): Expression for $\epsilon^{df}$ \\
+(3): Expression for $\epsilon^{ya}$ \\
+(4): Naturality of the left epsilons and naturality of $\eta^f$ in right side \\
+(5): Naturality of left epsilons and triangle identity for $f$ \\
+(6): naturality of $\eta^f$ \\
+(7): Naturality of the $\eta$s, triangle identity for $a$
+\end{proof}
+
+We shall prove a result that will come very handy to prove some comonad identities. 
+
+First, we need a little technical lemma
+
+\begin{lemma}
+    The Beck-Chevalley morphism is compatible with gluing, that is
+
+    \[\begin{tikzcd}[ampersand replacement=\&]
+	A \&\& B \&\& E \&\& {[E]} \&\& {[B]} \&\& {[A]} \\
+	\\
+	C \&\& D \&\& F \&\& {[F]} \&\& {[D]} \&\& {[C]}
+	\arrow["x", from=1-1, to=1-3]
+	\arrow["y", from=1-3, to=1-5]
+	\arrow["w"', from=1-1, to=3-1]
+	\arrow["v"', from=3-1, to=3-3]
+	\arrow["u"', from=3-3, to=3-5]
+	\arrow["z", from=1-5, to=3-5]
+	\arrow["h"{description}, from=1-3, to=3-3]
+	\arrow["\lrcorner"{anchor=center, pos=0.125}, draw=none, from=1-1, to=3-3]
+	\arrow["\lrcorner"{anchor=center, pos=0.125}, draw=none, from=1-3, to=3-5]
+	\arrow["{x^\ast}", from=1-9, to=1-11]
+	\arrow["{y^\ast}", from=1-7, to=1-9]
+	\arrow[""{name=0, anchor=center, inner sep=0}, "{(yx)^\ast}", curve={height=-24pt}, from=1-7, to=1-11]
+	\arrow["{u^\ast}"', from=3-7, to=3-9]
+	\arrow["{v^\ast}"', from=3-9, to=3-11]
+	\arrow[""{name=1, anchor=center, inner sep=0}, "{(uv)^\ast}"{description}, curve={height=24pt}, from=3-7, to=3-11]
+	\arrow["{\Pi_z}"', from=1-7, to=3-7]
+	\arrow["{\Pi_w}", from=1-11, to=3-11]
+	\arrow["{\Pi_h}"{description}, from=1-9, to=3-9]
+	\arrow[shorten <=22pt, shorten >=22pt, Rightarrow, from=3-7, to=1-9]
+	\arrow[shorten <=22pt, shorten >=22pt, Rightarrow, from=3-9, to=1-11]
+	\arrow[shorten <=2pt, Rightarrow, from=1, to=3-9]
+	\arrow[shorten >=2pt, Rightarrow, from=1-9, to=0]
+\end{tikzcd}\]
+\end{lemma}
+\begin{proof}
+    Immediate from it being the described mate and the coherence of the composition isomorphisms
+\end{proof}
+
+We will not put out the whole definition of a bicategory, which the reader can get from \cite[Chapter 2]{Johnson2021}.
+
+\begin{definition}
+    Let $\mathcal{S}$ be a category with pullbacks. Then we have a bicategory $\mathrm{Span}(\mathcal{S})$ of spans with composition being "span composition" as previously defined, and horizontal composition being precisely taking the pullback-induced arrow. We still write $<X, Y>$ for the corresponding hom-categories of spans.
+\end{definition}
+
+We now refine our previous construction using bicategories.
+
+\begin{lemma}\label{thm:span-pseudofunctorial-fundamental-lemma}
+    Let $\mathbb{D}$ be an $\mathcal{S}$-complete category. We define a functor $\mathcal{G}$ from $\mathrm{Span}(\mathcal{S})$:
+
+    \begin{itemize}
+        \item $\mathcal{G}$ takes $X$ to $D^X$
+
+        \item $\mathcal{G}$ takes a span
+
+        \[\begin{tikzcd}[ampersand replacement=\&]
+	S \&\& Y \\
+	\\
+	X
+	\arrow["y", from=1-1, to=1-3]
+	\arrow["x"', from=1-1, to=3-1]
+        \end{tikzcd}\]
+
+    \noindent to $\Pi_y x^\ast$
+
+    \item $\mathcal{G}$ takes
+
+    \[\begin{tikzcd}[ampersand replacement=\&]
+	S \&\& Y \\
+	\& T \\
+	X
+	\arrow["y", from=1-1, to=1-3]
+	\arrow["x"', from=1-1, to=3-1]
+	\arrow["z", from=2-2, to=3-1]
+	\arrow["w"', from=2-2, to=1-3]
+	\arrow["f"', from=1-1, to=2-2]
+\end{tikzcd}\]
+
+    \noindent to $(\psi_{w, f} \ast \psi_{z, f}) \circ \Pi_w \eta^f_{z^\ast}$.
+    \end{itemize}
+
+    Let us write $D^\square$ for the $2$-category with objects $D^X$ whose hom-categories are inverted, that is, $[D^X, D^Y]^{op}$. Then $\mathcal{G}$ defines a pseudofunctor $\mathrm{Span}{(\mathcal{S})} \to D^\square$.
+\end{lemma}
+\begin{proof}
+    The coherence isos for composition are given by Beck-Chevalley and the coherence isos for $\mathbb{D}$. The associativity commutativity conditions follow from the previous lemma.
+
+    For instance, let us consider the condition
+
+        \[\begin{tikzcd}
+	& {<X, Y> \times <Y, Z>} \\
+	\\
+	{<X, Z>} && {[D^X, D^Y]^{op} \times [D^Y, D^Z]^{op}} \\
+	& {[D^X, D^Z]^{op}}
+	\arrow["{\mathcal{G} \times \mathcal{G}}", from=1-2, to=3-3]
+	\arrow["\times"', from=1-2, to=3-1]
+	\arrow["\ast", from=3-3, to=4-2]
+	\arrow["{ \xi_{T, S}^{-1} \mathcal{G} \xi_{V, U}}"', from=3-1, to=4-2]
+    \end{tikzcd}\]
+
+\noindent where $\xi_{S, T}: \mathcal{G}(S) \circ \mathcal{T} \to \mathcal{G}(S \circ T)$ is the coherence iso given by the obvious composition of the Beck-Chevalley isomorphism and $\phi, \psi$.
+
+Let us consider the above situation with the spans
+
+\[\begin{tikzcd}
+	\textcolor{rgb,255:red,153;green,153;blue,153}{T \circ S} && T && Z \\
+	& \textcolor{rgb,255:red,153;green,153;blue,153}{V \circ U} && V \\
+	S && Y \\
+	& U \\
+	X
+	\arrow["y", from=3-1, to=3-3]
+	\arrow["w"', from=1-3, to=3-3]
+	\arrow["v", from=1-3, to=2-4]
+	\arrow[from=2-4, to=3-3]
+	\arrow["z", from=1-3, to=1-5]
+	\arrow[from=2-4, to=1-5]
+	\arrow[from=4-2, to=3-3]
+	\arrow[from=4-2, to=5-1]
+	\arrow["x"', from=3-1, to=5-1]
+	\arrow["u"', from=3-1, to=4-2]
+	\arrow[color={rgb,255:red,153;green,153;blue,153}, from=2-2, to=4-2]
+	\arrow["{u \times v}", color={rgb,255:red,153;green,153;blue,153}, from=1-1, to=2-2]
+	\arrow[color={rgb,255:red,153;green,153;blue,153}, from=2-2, to=2-4]
+	\arrow[color={rgb,255:red,153;green,153;blue,153}, from=1-1, to=3-1]
+	\arrow[color={rgb,255:red,153;green,153;blue,153}, from=1-1, to=1-3]
+\end{tikzcd}\]
+
+Now, we have
+
+\begin{align*}
+    \Pi_{z p_T} \epsilon^{d_{S, T}}_{(x p_S)^\ast} \circ (\mathcal{G}(p_T) \ast \mathcal{G}(p_S))
+    \\ = \Pi_{z p_T} \epsilon^{d_{S, T}}_{(x p_S)^\ast} \circ (((\psi_{z, p_T} \ast \phi_{w, P_T}) \circ \Pi_z \eta^{p_T}_{w^\ast}) \ast ((\psi_{y, p_S} \ast \phi_{x, p_S}) \circ \Pi_y \eta^{p_S}_{x^\ast}))
+    \\ = \Pi_{z p_T} \epsilon^{p_S}_{(x p_S)^\ast} \circ \Pi_{z p_T} p_S^\ast \epsilon^{y}_{\Pi_{p_S} (x p_S)^\ast} \circ \Pi_{z p_T} (\phi_{y, p_S}^{-1} \ast \psi_{x, p_S}^{-1})_{(x p_S)^\ast} \circ (((\psi_{z, p_T} \ast \phi_{w, P_T}) \circ \Pi_z \eta^{p_T}_{w^\ast}) \ast ((\psi_{y, p_S} \ast \phi_{x, p_S}) \circ \Pi_y \eta^{p_S}_{x^\ast}))
+    \\ = \psi_{z, p_T} \circ \Pi_{z} \Pi_{p_T} \epsilon^{p_S}_{(x p_S)^\ast} \circ \Pi_{z} \Pi_{p_T} p_S^\ast \epsilon^{y}_{\Pi_{p_S} (x p_S)^\ast} \circ ((\Pi_{z} \Pi_{p_T} (\phi^{-1}_{y, P_S} \phi_{w, P_T}) \circ \Pi_z \eta^{p_T}_{w^\ast}) \ast (\Pi_{y} \Pi_{P_S} (\phi_{x, p_S}) \circ \Pi_y \eta^{p_S}_{x^\ast})) && \text{(1)}
+    \\ = (\psi_{z, p_T} \ast \phi_{x, P_s}) \circ \Pi_{z} \Pi_{p_T} p_S^\ast \epsilon^{y}_{\Pi_{p_S} (x p_S)^\ast} \circ (\Pi_{z} \Pi_{p_T} (\phi^{-1}_{y, P_S} \phi_{w, P_T}) \circ \Pi_z \eta^{p_T}_{w^\ast}) && \text{(2)}
+    \\ = \xi_{S, T}
+\end{align*}
+
+\noindent
+(1): Naturality of $\psi_{z, p_T}$, cancelled $\psi_{z, p_S}$ \\
+(2): Naturality of the epsilons, triangle identity for $p_S$
+
+Now it suffices to invoke Lemma \ref{thm:beck-chevalley-fundamental-lemma} and we're done.
+
+Also, note that we have the expected identities for different pullbacks in Beck-Chevalley, that is, if we have weo candidate pullbacks
+
+\[\begin{tikzcd}[ampersand replacement=\&]
+	\& D \\
+	E \&\&\& B \\
+	\\
+	\& A \&\& C
+	\arrow["a", from=1-2, to=4-2]
+	\arrow["b", from=1-2, to=2-4]
+	\arrow["{a^\prime}"', from=2-1, to=4-2]
+	\arrow["{b^\prime}", from=2-1, to=2-4]
+	\arrow["u"', from=4-2, to=4-4]
+	\arrow["v", from=2-4, to=4-4]
+	\arrow["\cong"', draw=none, from=1-2, to=2-1]
+	\arrow["\alpha"{description}, from=1-2, to=2-1]
+\end{tikzcd}\]
+
+\noindent then (where $\tau, \tau^\prime$ are the B-C isos for $D ,E$, respectively),
+
+\begin{align*}
+    \mathcal{G}(\alpha) \circ \tau^\prime = (\psi_{b^\prime, \alpha} \ast \phi_{a^\prime, \alpha}) \circ \Pi_{b^\prime} \eta^{\alpha}_{{a^\prime}^\ast} \circ \tau^\prime
+    \\ = (\psi_{b^\prime, \alpha} \ast \phi_{a^\prime, \alpha}) \circ \Pi_{b^\prime} \eta^{\alpha}_{{a^\prime}^\ast} \circ \Pi_{b^\prime}{a^\prime}^{\ast} \epsilon^u \circ \Pi_{b^\prime} {\phi^{-1}_{u, a^\prime} \phi_{v, b^\prime}}_{\Pi_u} \circ \eta^{b^\prime}_{v^\ast \Pi_u}
+    \\ = \Pi_{b}{a}^{\ast} \epsilon^u \circ \Pi_b {\phi_{a^\prime, \alpha}}_{u^\ast \Pi_u} \circ \Pi_{b} \alpha^\ast {\phi^{-1}_{u, a^\prime} \phi_{v, b^\prime}}_{\Pi_u} \circ {\psi_{b^\prime, \alpha}}_{\alpha^\ast {b^\prime}^\ast v^\ast \Pi_{u}} \circ \Pi_{b^\prime} \eta^\alpha_{{b^\prime}^\prime v^\ast \Pi_{u}} \circ \eta^{b^\prime}_{v^\ast \Pi_u} && \text{(1)}
+    \\ = \Pi_{b}{a}^{\ast} \epsilon^u \circ \circ \Pi_{b} \alpha^\ast {\phi^{-1}_{u, a} \phi_{v, b}}_{\Pi_u} \circ \Pi_b {\phi_{b^\prime, \alpha}}_{v^\ast \Pi_u} \circ {\psi_{b^\prime, \alpha}}_{\alpha^\ast {b^\prime}^\ast v^\ast \Pi_{u}} \circ \Pi_{b^\prime} \eta^\alpha_{{b^\prime}^\prime v^\ast \Pi_{u}} \circ \eta^{b^\prime}_{v^\ast \Pi_u} && \text{(2)}
+    \\ = \tau && \text{(3)}
+\end{align*}
+
+\noindent
+(1): Naturality of $\eta^\alpha, \psi_{\alpha, b^\prime}, \phi_{a^\prime, \alpha}$ \\
+(2): Associativity condition for isos $\phi$ \\
+(3): Identity for $\eta^{yx}$
+
+\end{proof}
+
+\section{(Co) monadicity of diagrams}
+\begin{definition}
+    Let $\mathbb{E}$ be a $\mathcal{S}$-indexed category. A $\mathbb{C}$-shaped diagram in $\mathbb{E}$ consists of the following data:
+
+    \begin{itemize}
+        \item An object $P \in \mathbb{E}^{C_0}$
+        \item An arrow $\Phi: d_0^\ast P \to d_1^\ast P$
+    \end{itemize}
+
+    such that $i^\ast \Phi = 1_P$ and $c^\ast \Phi = p_1^\ast \Phi \circ p_0^\ast \Phi$ modulo the coherence isos, that is,
+
+    \begin{itemize}
+        \item $ \phi_{d_0, i} i^\ast \Phi \phi_{d_1, i}^{-1} = 1_{1^\ast P}$
+
+        \item $c^\ast \Phi = \phi_{d_1, c}^{-1} \phi_{d_1, p_1} p_1^\ast \Phi \phi_{d_0, p_1}^{-1} \phi_{d_1, p_0} p_0^\ast \Phi \phi_{d_0, p_0}^{-1} \phi_{d_0, c}$
+    \end{itemize}
+    
+    Morphisms between such diagrams are defined in the obvious way.
+
+    We write $\mathbb{E}^\mathbb{C}$ for the corresponding category.
+\end{definition}
+
+It is not hard to see that under externalization of small categories we have an equivalence of indexed functors $\underline{\mathbb{C}} \to \mathbb{E}$ and $\mathbb{C}$-shaped diagrams in $\mathbb{E}$. A nice intuition for diagrams is considering the notion of in-universe functor as an action in the slice indexing of $\mathcal{S}$ over itself. In fact, the reader might check that under the standard $\mathrm{Set}$-indexing of categories, diagrams correspond to the usual notion, yielding a mapping whose functoriality is expressed by the last two conditions. Internal diagrams give rise to diagram categories, with $\left( \mathbb{E}^\mathbb{C} \right)^I = \mathbb{E}^{\mathbb{C} \times I}$, with the obvious transition functors.
+
+Now, if we wish to talk about the indexed version of the limit and colimit functors, it seems reasonable to look for adjoints of the pre-composition indexed functor $F^\ast: \mathbb{E}^\mathbb{D} \to \mathbb{E}^\mathbb{C}$ (where $F$ is an internal functor). In fact, we look at adjoints of the indexing functors, by endowing $\mathbb{E}$ with a $\mathrm{Cat}(\mathcal{S})$-indexed structure in the obvious way.
+
+\begin{theorem}
+    Let $\mathbb{E}$ have the canonical $\mathrm{Cat}(\mathcal{S})$-indexed category structure. Then if $\mathbb{E}$ is (co) complete (in the indexed sense), its transition functors have right (left) adjoints. Moreover, $\mathbb{D}^\mathbb{C}$ has $\mathcal{S}$-indexed (co)products.
+\end{theorem}
+
+First, we need to prove
+
+\begin{theorem}
+    Let $\mathbb{D}$ have $\mathcal{S}$-indexed products. Then the category $\mathcal{D}^\mathbb{C}$ (we use this notation for the non-indexed version) is comonadic over $\mathcal{D}^\mathbb{C}$.
+\end{theorem}
+\begin{proof}
+ Thanks to the results laid out in the previous section, we shall be able to easily prove this result.
+
+   Consider the following map
+
+    \[\begin{tikzcd}[ampersand replacement=\&]
+	{\Pi_{d_0} d_1^\ast} \&\& {\Pi_{d_0} \Pi_{i} i^\ast d_1^\ast} \&\& 1
+	\arrow["\cong", from=1-3, to=1-5]
+	\arrow["{\psi_{d_0, i} \ast \phi_{d_1, i}}"', draw=none, from=1-3, to=1-5]
+	\arrow["{\Pi_{d_0} \eta_{d_1^\ast}}"', from=1-1, to=1-3]
+    \end{tikzcd}\]
+
+\noindent which we denote by $\eta$.
+
+Now, if $(P, \Phi)$ is an internal diagram, consider the $d_0^\ast$-transpose $\Phi^\prime: P \to \Pi_{d_0} d_1^\ast P$.
+
+Then we have the unit property
+
+\begin{align*}
+    ({\theta^\prime}^{-1} \psi_{d_1, i} \ast \theta^{-1} \phi_{d_0, i}) \circ \Pi_{d_0} \eta^i_{d_1^\ast} \circ \Pi_{d_0} \Phi \circ \eta^{d_0}_P \\
+    =  ({\theta^\prime}^{-1} \psi_{d_1, i} \ast \theta^{-1} \phi_{d_0, i}) \circ \circ \Pi_{d_0} \Pi_i i^\ast \Phi \circ \Pi_{d_0} \eta^i_{d_0^\ast} \circ \eta^{d_0}_P  && \text{(naturality of $\eta^i$)} \\
+    = 1 && \text{(unit identities proved in Remark \ref{rem:unit-identities})}
+\end{align*}
+
+Note that by the selfsame identities (that is, right and left side are isos) and $id_0 = 1$, we can recover such equality so converse holds.
+
+Consider also
+
+\[\begin{tikzcd}[ampersand replacement=\&]
+	{\Pi_{d_0} d_1^\ast} \&\& {\Pi_{d_0} \Pi_{c} c^\ast d_1^\ast} \&\& {\Pi_{d_0} \Pi_{p_0} p_1^\ast d_1^\ast} \&\& {\Pi_{d_0} d_1^\ast \Pi_{d_0} d_1^\ast}
+	\arrow["{\Pi_{d_0} \eta_{d_1^\ast}}", from=1-1, to=1-3]
+	\arrow["\cong", from=1-3, to=1-5]
+	\arrow[from=1-5, to=1-7]
+\end{tikzcd}\]
+
+\noindent which we denote by $\mu$, where the last arrow (which we denote by $\alpha$) is induced by the Beck-Chevalley condition on the pullback
+
+\[\begin{tikzcd}[ampersand replacement=\&]
+	{C_2} \&\& {C_1} \\
+	\\
+	{C_1} \&\& {C_0}
+	\arrow["{p_1}", from=1-1, to=1-3]
+	\arrow["{p_0}"', from=1-1, to=3-1]
+	\arrow["{d_1}"', from=3-1, to=3-3]
+	\arrow["{d_0}", from=1-3, to=3-3]
+	\arrow["\lrcorner"{anchor=center, pos=0.125}, draw=none, from=1-1, to=3-3]
+\end{tikzcd}\]
+
+Then we have the composition property for the transpose of our diagram $\Phi$:
+
+\begin{align*}
+    \Pi_{d_0} \alpha^{-1}_{d_1^\ast} \circ (\psi_{d_0, p_0}^{-1} \psi_{d_0, c} \ast \phi_{d_1, p_1}^{-1} \phi_{d_1, c}) \circ \Pi_{d_0} \eta^c_{d_1^\ast} \circ \Pi_{d_0} \Phi \circ \eta^{d_0}
+    \\ = \Pi_{d_0} d_1^\ast \Pi_{d_0} \Phi \circ \Pi_{d_0} \alpha^{-1}_{d_0^\ast} \circ \Pi_{d_0} \Pi_{p_0} \left(\phi_{d_0, p_1}^{-1} \circ \phi_{d_1, p_0} \circ p_0^\ast \Phi \circ \phi_{d_0, p_0}^{-1} \circ \phi_{d_0, c} \right) \circ (\psi_{d_0, p_0}^{-1} \psi_{d_0, c})_{c^\ast d_0^\ast} \circ \Pi_{d_0} \eta^c_{d_0^\ast} \circ \eta^{d_0} && \text{(1)}
+    \\ = \Pi_{d_0} d_1^\ast \Pi_{d_0} \Phi \circ \Pi_{d_0} \alpha^{-1}_{d_0^\ast} \circ \Pi_{d_0} \Pi_{p_0} \left(\phi_{d_0, p_1}^{-1} \circ \phi_{d_1, p_0} \circ p_0^\ast \Phi \right) \circ \Pi_{d_0} \eta^{p_0}_{d_0^\ast} \circ \eta^{d_0} && \text{(2)}
+    \\ = \Pi_{d_0} d_1^\ast \Pi_{d_0} \Phi \circ \Pi_{d_0} \alpha^{-1}_{d_0^\ast} \circ \Pi_{d_0} \Pi_{p_0} p_1^\ast (\epsilon^{d_0}_{d_0^\ast} \circ d_0^\ast \eta^{d_0}) \circ \Pi_{d_0} \Pi_{p_0} \left(\phi_{d_0, p_1}^{-1} \circ \phi_{d_1, p_0} \right) \circ \Pi_{d_0} \eta^{p_0}_{d_1^\ast} \circ \Pi_{d_0} \Phi \circ \eta^{d_0} && \text{(3)}
+    \\ = \Pi_{d_0} d_1^\ast \Pi_{d_0} \Phi \circ \Pi_{d_0} d_1^\ast \eta^{d_0} \circ \Pi_{d_0} \Phi \circ \eta^{d_0} && \text{(4)}
+\end{align*}
+
+\noindent
+(1): Naturality of $\eta^c$, expansion of $c^\ast \Phi$, naturality of $\psi, \alpha^{-1}$ \\
+(2): Identity for $\eta^{yx}$ for $d_0c, p_0c$ \\
+(3): Swap $\eta^{p_0}$ and $\Phi$, then apply the triangle identity in reverse for $d_0$ \\
+(4): Pass new $\eta^{d_0}$ rightward using naturality, then we get the exact expression for $\alpha$ \\
+
+Note for converse, we use step 0 to 1, cutting off all isos, and noting that the expression we're left is nothing more than two transposes.
+
+Now we verify that $(\Pi_{d_0} d_1^\ast, \eta, \mu)$ has comonad structure. Recall Remark \ref{rem:span-beck-chevalley}.
+
+In the language of spans, an internal category is given by spans
+
+\[\begin{tikzcd}[ampersand replacement=\&]
+	{C_1} \& {C_0} \& {C_2} \& {C_1} \& {C_0} \& {C_0} \\
+	{C_0} \&\& {C_1} \&\& {C_0}
+	\arrow["{d_1}"', from=1-1, to=2-1]
+	\arrow["{d_0}", from=1-1, to=1-2]
+	\arrow["{p_1}"', from=1-3, to=2-3]
+	\arrow["{p_0}", from=1-3, to=1-4]
+	\arrow[no head, from=1-5, to=2-5]
+	\arrow[no head, from=1-5, to=1-6]
+\end{tikzcd}\]
+
+\noindent (where the second is the obvious composite) and the appropriate arrows $c, i$ between. Thanks to Lemma \ref{thm:span-pseudofunctorial-fundamental-lemma}, we can easily prove commutativity as desired. Recall the notation with the functor $\mathcal{G}$ and transition isos $\xi_{T, S}$. Then for $c(1 \times i)$, for instance, it follows immediately that
+
+$$1 = \mathcal{G}(c (1 \times i)) = \mathcal{G}(1 \times i) \circ \mathcal{G}(c) = \xi_{C_1, C_0}^{-1} (\mathcal{G}(i) \ast) \xi_{C_1, C_1}^{-1} \mathcal{G}(c) = \ \eta^\prime \ast \Pi_{d_0} d_1^\ast \circ \mu^\prime$$
+
+\noindent by choosing $C_1 \circ C_0 = C_1$ (noting that the Beck-Chevalley coherence isos are entirely compatible with the pullback isomorhisms, as proved in the end of the previous section).
+
+Also,
+
+$$\mathcal{G}(c(1 \times c)) = \xi_{C_2, C_1} (\mathcal{G} \ast \mathcal{G}(1) \xi_{C_1, C_1}^{-1} \mathcal{G}(c)$$
+
+Now note by coherence
+
+\[\begin{tikzcd}[ampersand replacement=\&]
+	{\mathcal{G}(C_2) \circ \mathcal{G}(C_1)} \&\& {\mathcal{G} (C_1) \circ \mathcal{G} (C_1) \circ \mathcal{G} (C_1)} \\
+	\\
+	{\mathcal{G}(C_3)} \&\& {\mathcal{G}(C_1) \circ \mathcal{G}(C_2)}
+	\arrow["{\xi_{C_2, C_1}}"', from=1-1, to=3-1]
+	\arrow["{{\xi_{C_1, C_1}}_{\Pi_{d_0} d_1^\ast}^{-1}}", from=1-1, to=1-3]
+	\arrow["{\Pi_{d_0} d_1^\ast \xi_{C_1, C_1}^{-1}}"', from=3-3, to=1-3]
+	\arrow["{\xi_{C_2, C_1}^{-1}}"', from=3-1, to=3-3]
+\end{tikzcd}\]
+
+\noindent so postcomposing we get the desired equality.
+\end{proof}
+
+
+We've just proved a crucial theorem towards our goal, but we still need another to constructed the desired colimits, which we'll prove in the next section
+
+\section{Interlude: morphisms of monads}
+
+Just like in the previous section, we lay out results which'll be useful later on the next section. Let $T, S$ be two monads. We write $\eta^T, \eta^S, \mu^T, \mu^S$ for the respective unit/multiplication arrows. Let
+
+\[\begin{tikzcd}[ampersand replacement=\&]
+	{C^T} \&\& {D^S} \\
+	\\
+	C \&\& D
+	\arrow["Q"', from=1-1, to=1-3]
+	\arrow["R"', from=3-1, to=3-3]
+	\arrow["{U^T}", shift left, from=1-1, to=3-1]
+	\arrow["{U^S}", shift left, from=1-3, to=3-3]
+	\arrow["{F^T}", shift left, from=3-1, to=1-1]
+	\arrow["{F^S}", shift left, from=3-3, to=1-3]
+\end{tikzcd}\]
+
+\noindent be a square s.t. $R U^T = U^S Q$.
+
+Let
+
+$$\delta = \mathrm{Mate}(R U^T = U^S Q) = \epsilon^S_{Q F^T} \circ F^S R \eta^T$$
+
+\noindent and $\lambda = U^S \delta$. Then clearly by the triangle inequality
+
+\[\begin{tikzcd}[ampersand replacement=\&]
+	R \&\& SR \\
+	\\
+	\&\& RT
+	\arrow["{R \eta^T}"', from=1-1, to=3-3]
+	\arrow["\lambda", from=1-3, to=3-3]
+	\arrow["{\eta^S_R}", from=1-1, to=1-3]
+\end{tikzcd}\]
+
+Furthermore,
+
+\begin{align}
+    R \mu^T \circ \lambda_T \circ S \lambda
+    \\ = U^S Q \epsilon^T_{F^T} \circ (U^S \epsilon^S_{Q F^T T} \circ S R \eta^T_T) \circ (S U^S \epsilon^S_{Q F^T} \circ S S R \eta^T)
+    \\ = U^S \epsilon^S_{Q F^T} \circ (S U^S \epsilon^S_{Q F^T} \circ S S R \eta^T) && \text{(Naturality of $\epsilon^S$ and triangle identity)}
+    \\ = (U^S \epsilon^S_{Q F^T} \circ S R \eta^T) \circ U^S \epsilon^S_{F^S R} && \text{(Naturality of the left $\epsilon^S$)}
+    \\ \lambda \circ \mu^R
+\end{align}
+
+\noindent so we have
+
+\[\begin{tikzcd}[ampersand replacement=\&]
+	{S^2 R} \&\&\& SR \\
+	SRT \\
+	{RT^2} \&\&\& RT
+	\arrow["{\mu^S_R}", from=1-1, to=1-4]
+	\arrow["\lambda", from=1-4, to=3-4]
+	\arrow["{S \lambda}"', from=1-1, to=2-1]
+	\arrow["{\lambda_T}"', from=2-1, to=3-1]
+	\arrow["{R \mu^T}"', from=3-1, to=3-4]
+\end{tikzcd}\]
+
+In fact, the reader might know that monads correspond to lax functors $1 \to \mathrm{Cat}$, and in fact the transformation $\lambda$ yields a lax transformation between such functors.
+
+\begin{lemma}
+    We have $Q(A, a) = (RA, Ra \circ \lambda_A)$
+\end{lemma}
+\begin{proof}
+    $$R U^T \epsilon^T_{(A, a)} \circ \lambda_{U_T} = U^S \epsilon^S_{Q}$$
+
+    \noindent by naturality of $\epsilon^S$ and the triangle identity.
+\end{proof}
+
+Thus there is an equivalence between the data of $(R, \lambda)$ and the data given by the square at the start of the section, as we can reconstruct $Q: C^S \to D^T$ from $R$. We call the pair $(R, \lambda)$ satisfying the aforementioned identities a morphism of monads. In fact, we can compose these 1-cells. Let $(R, \lambda): T \to S,  (L, \delta): S \to K$ be given. Then the obvious composition is the desired composition: $L \lambda \circ \delta_R$.
+
+Of course, if one unravels the definition of modification (2-cells for lax functors) then we have that a 2-cell $(R, \lambda) \to (L, \delta)$ consists of $\gamma: R \implies L$ s.t. $\gamma_T \circ \lambda = \delta \circ S \gamma$. Furthermore, we have horizontal composition by taking the horizontal composition of the underlying transformations.
+
+We define the notion of comorphism of monads $(L, \delta): S \to T$ as being induced by an oplax transformation instead, which gives us the dual identities:
+
+\[\begin{tikzcd}[ampersand replacement=\&]
+	L \&\& LS \\
+	\\
+	\&\& TL
+	\arrow["{L \eta^S}", from=1-1, to=1-3]
+	\arrow["\delta", from=1-3, to=3-3]
+	\arrow["{\eta^T_L}"', from=1-1, to=3-3]
+\end{tikzcd}\]
+
+\[\begin{tikzcd}[ampersand replacement=\&]
+	{LS^2} \&\&\& LS \\
+	TLS \\
+	{T^2 L} \&\&\& TL
+	\arrow["{L \mu^S}", from=1-1, to=1-4]
+	\arrow["\delta", from=1-4, to=3-4]
+	\arrow["{\delta_S}"', from=1-1, to=2-1]
+	\arrow["{T \delta}"', from=2-1, to=3-1]
+	\arrow["{\mu^T_L}"', from=3-1, to=3-4]
+\end{tikzcd}\]
+
+We shall write $T \rightharpoonup S$ and $T \rightharpoondown S$ for morphisms and comorphisms of moands respectively, from now own.
+
+\begin{lemma}
+    Suppose $(R, \lambda): T \rightharpoonup S$ and $R$ has a left adjoint $L$. Then the mate of $\lambda$ yields $(L, \delta): S \rightharpoondown T$.
+\end{lemma}
+\begin{proof}
+    Recall that by mate we mean
+
+    $$\delta = \epsilon^L_{TL} \circ L \lambda_L \circ L S \eta^L$$
+    
+    Verification of the unit identity is straightforward. To verify the composition identity:
+
+    \begin{align*}
+        \mu^T_L \circ T \delta \circ \delta_S
+        \\ = \epsilon^S_{TL} \circ LR \mu^T \circ L \lambda_{TLS} \circ LSR \delta \circ LS \eta^L_S && \text{(Naturality of $\epsilon^S$ and $\lambda$)}
+        \\ = \epsilon^S_{TL} \circ LR \mu^T_L \circ L \lambda_{TLS} \circ LSR (\epsilon^L_{TL} \circ L \lambda_{L} \circ LS \eta^L) \circ LS \eta^L && \text{(Expanded expression)}
+        \\ = \epsilon^S_{TL} \circ LR \mu^T_L \circ L \lambda_{TL} \circ LS \lambda_{L} \circ L S S \eta^L && \text{(Naturality of rightmost $\eta^L$ and triangle identity)}
+        \\ = \epsilon^S_{TL} \circ L (\lambda \circ \mu^S_R)_L \circ L S S \eta^L  && \text{(Composition identity)}
+        \\ = \delta \circ L \mu^S
+    \end{align*}
+\end{proof}
+
+Just like for morphisms of monads, if we are given
+
+\[\begin{tikzcd}[ampersand replacement=\&]
+	{C^T} \&\& {D^S} \\
+	\\
+	C \&\& D
+	\arrow["{U^T}", shift left, from=1-1, to=3-1]
+	\arrow["{U^S}", shift left, from=1-3, to=3-3]
+	\arrow["{F^T}", shift left, from=3-1, to=1-1]
+	\arrow["{F^S}", shift left, from=3-3, to=1-3]
+	\arrow["P"', from=1-3, to=1-1]
+	\arrow["L"', from=3-3, to=3-1]
+\end{tikzcd}\]
+
+\noindent s.t. $F^T L = P F^S$, we can get a comorphism $(L, \delta): S \rightharpoondown T$ by taking the mate $\pi$ of the equality
+
+\[\begin{tikzcd}[ampersand replacement=\&]
+	D \&\& C \\
+	\\
+	{D^S} \&\& {C^T}
+	\arrow["Q", from=1-1, to=1-3]
+	\arrow["{F^T}", from=1-3, to=3-3]
+	\arrow["P"', from=3-1, to=3-3]
+	\arrow["{F^S}"', from=1-1, to=3-1]
+	\arrow["1"', shorten <=22pt, shorten >=22pt, Rightarrow, from=1-3, to=3-1]
+\end{tikzcd}\]
+
+\noindent then setting $\delta = \pi_{F^S}$. We leave it to the interested reader to verify the identities are satisfied.
+
+\begin{lemma}
+    Let
+
+    \[\begin{tikzcd}[ampersand replacement=\&]
+	{C^T} \&\& {D^S} \\
+	\\
+	C \&\& D
+	\arrow["Q"', shift right, from=1-1, to=1-3]
+	\arrow["R"', shift right, from=3-1, to=3-3]
+	\arrow["{U^T}", shift left, from=1-1, to=3-1]
+	\arrow["{U^S}", shift left, from=1-3, to=3-3]
+	\arrow["{F^T}", shift left, from=3-1, to=1-1]
+	\arrow["{F^S}", shift left, from=3-3, to=1-3]
+	\arrow["P"', shift right, from=1-3, to=1-1]
+	\arrow["L"', shift right, from=3-3, to=3-1]
+\end{tikzcd}\]
+
+\noindent such that
+
+\[\begin{tikzcd}[ampersand replacement=\&]
+	{(R U^T, \_)} \&\& {(\_, F^T L)} \\
+	\\
+	{(U^S Q, \_)} \&\& {(\_, P F^S)}
+	\arrow["{=}"', no head, from=1-1, to=3-1]
+	\arrow["{=}", no head, from=1-3, to=3-3]
+	\arrow["\cong"{description}, from=3-1, to=3-3]
+	\arrow["\cong"{description}, from=1-1, to=1-3]
+\end{tikzcd}\]
+
+Then the two ways of obtaining a comorphism $(L, \delta): S \rightharpoondown T$ give the same arrow.
+\end{lemma}
+\begin{proof}
+
+We talk about horizontal and vertical mates, in the obvious sense. Note that by the condition on the transposes, the identity transformation representing $P F^S = F^T L$ is given by the horizontal transpose followed by the vertical transpose of $R U^T = U^S Q$. Now, if we write $\circ_V, \circ_H$ for vertical and horizontal $2$-cell square composition, respectively, we have:
+
+\begin{align*}
+\mathrm{VMate}( (R U^T = U^S Q) \circ_V  \mathrm{HMate}(R U^T = U^S Q))
+\\ = \mathrm{VMate}(R U^T = U^S Q) \circ_V (R U^T = U^S Q)
+\end{align*}
+    
+\end{proof}
+
+We thus obtain the following results which are crucial for the next section in terms of motivation:
+
+\begin{corollary}\label{thm:comorphism-monads-corollary}
+    With the same conditions as the previous lemma, one has
+
+    $$P \epsilon^{F^S}_{F^S} = \epsilon^{F^T}_{F^T L} \circ F^T \delta = \epsilon^{F^T}_{F^T L} \circ F^T \epsilon^L_{TL} \circ F^T L U^S \epsilon^{F^s}_{L} \circ F^T L S R \eta^T_L \circ F^T L S \eta^L$$
+\end{corollary}
+
+\begin{lemma}
+    If we write
+
+    $$\pi = \mathrm{Mate}(R U^T = U^S Q) = \epsilon^S_{Q F^T} \circ F^S R \eta^T$$
+
+    \noindent we have
+    
+    $$\pi_L \circ F^S \eta^S = \eta^Q_{F^S}$$
+\end{lemma}
+\begin{proof}
+    \begin{align*}
+        \pi_L \circ F^S \eta^S
+        \\ = \epsilon^S_{Q F^T L} \circ F^S R \eta^T_L \circ F^S \eta^R
+        \\ = \epsilon^S_{Q F^T L} \circ F^S U^S \eta^Q_{F^S} \circ F^S \eta^S && \text{(Commutativity condition on transposes)}
+        \\ = \eta^Q_{F^S}
+    \end{align*}
+\end{proof}
+
+Before we move on, we still need the following result crucially:
+
+\begin{lemma}
+    Let
+
+    $$\pi = \mathrm{Mate}(R U^T = U^S Q) = \epsilon^S_{Q F^T} \circ F^S R \eta^T$$
+
+    $$\varphi = \pi_L \circ F^S \eta^L$$
+
+    $$\omega = \epsilon^{F^T}_{F^T L} \circ F^T \delta$$
+
+    Without any assumption on the existence of a left adjoint for $Q$, we have:
+
+    \[\begin{tikzcd}[ampersand replacement=\&]
+	{F^SS} \&\& {F^S} \\
+	\\
+	{Q F^T L S} \&\& {Q F^T L}
+	\arrow["\varphi", from=1-3, to=3-3]
+	\arrow["{Q \omega}"', from=3-1, to=3-3]
+	\arrow["{\varphi_S}"', from=1-1, to=3-1]
+	\arrow["{\epsilon^S_{F^S}}", from=1-1, to=1-3]
+\end{tikzcd}\]
+\end{lemma}
+\begin{proof}
+    \begin{align*}
+        U^S Q \omega \circ U^S \varphi_S
+        \\ = R U^T \epsilon^{F^T}_{F^T L} \circ RT \delta \circ \lambda_{L S} \circ S \eta^L_S
+        \\ = R U^T \epsilon^{F^T}_{F^T L}  \circ \lambda_{T L} \circ S R \epsilon^L_{T L} \circ S \eta^L_{RTL} \circ S (\lambda_L \circ S \eta^L) && \text{(Naturality of the right $\lambda$ and $\eta$)} \\
+        = R U^T \epsilon^{F^T}_{F^T L}  \circ \lambda_{T L} \circ S (\lambda_L \circ S \eta^L) && \text{(Triangle identity)}
+        \\ = \lambda_L \circ S \eta^L \circ \mu^S && \text{(Composition identity and naturality of $\epsilon$)}
+        \\ = U^S (\varphi \circ \epsilon^{S}_{F^S})
+    \end{align*}
+\end{proof}
+
+\section{The adjoint lifting theorem}
+
+We follow \cite[Chapter 4.5]{Borceux1994}. Consider the following situation, where $T, S$ are monads:
+
+\[\begin{tikzcd}[ampersand replacement=\&]
+	{C^T} \&\& {D^S} \\
+	\\
+	C \&\& D
+	\arrow["Q", from=1-1, to=1-3]
+	\arrow["R"', from=3-1, to=3-3]
+	\arrow["{U^T}"', from=1-1, to=3-1]
+	\arrow["{U^S}", from=1-3, to=3-3]
+\end{tikzcd}\]
+
+We shall prove that if $C^T$ has coequalizers, $R$ being a right adjoint implies $Q$ is a right adjoint. To start, suppose $R$ and $Q$ have right adjoints. Then without loss of generality we can suppose both adjoint squares commute:
+
+\[\begin{tikzcd}[ampersand replacement=\&]
+	{C^T} \&\& {D^S} \\
+	\\
+	C \&\& D
+	\arrow["Q"', shift right, from=1-1, to=1-3]
+	\arrow["R"', shift right, from=3-1, to=3-3]
+	\arrow["{U^T}", shift left, from=1-1, to=3-1]
+	\arrow["{U^S}", shift left, from=1-3, to=3-3]
+	\arrow["{F^T}", shift left, from=3-1, to=1-1]
+	\arrow["{F^S}", shift left, from=3-3, to=1-3]
+	\arrow["P"', shift right, from=1-3, to=1-1]
+	\arrow["L"', shift right, from=3-3, to=3-1]
+\end{tikzcd}\]
+
+We fix some notation:
+
+\begin{itemize}
+    \item $\eta^F, \epsilon^F$ are the unit/counit for $F \dashv G$
+
+    \item $\eta^T, \mu^T$ are the unit and multiplication for the monad $T$
+\end{itemize}
+
+We'll always omit when there is no ambiguity.
+
+Recall that we have the following coequalizer (generalizing a common algebraic construction):
+
+\[\begin{tikzcd}[ampersand replacement=\&]
+	{F^S S(D)} \&\& {F^S(D)} \&\& {(D, d)}
+	\arrow["{\mu_{F^S(D)}}", shift left, from=1-1, to=1-3]
+	\arrow["{F^S(d)}"', shift right, from=1-1, to=1-3]
+	\arrow[from=1-3, to=1-5]
+\end{tikzcd}\]
+
+Then since $P$ preserves all colimits, passing the image we get an expression of $P(D, d)$ as a coequalizer. Now, since $P F_T = F^S L$, we start by retrieving $P \mu^S_{F^S}$. Thanks to Corollary \ref{thm:comorphism-monads-corollary} in the previous section, we already know hot to do it, by setting
+
+$$\omega = \epsilon^{F^T}_{F^TL} \circ F^T \delta$$
+
+We also set
+
+$$\varphi = \pi_L \circ F^S \eta^L$$
+
+Now, taking the coequalizer
+
+\[\begin{tikzcd}[ampersand replacement=\&]
+	{F^T L S (D)} \&\& {F^T L (D)} \&\& X
+	\arrow["{\omega_D}", shift left, from=1-1, to=1-3]
+	\arrow["{F^T L(d)}"', shift right, from=1-1, to=1-3]
+	\arrow["x", from=1-3, to=1-5]
+\end{tikzcd}\]
+
+\noindent we have, as proved in the previous section,
+
+\[\begin{tikzcd}[ampersand replacement=\&]
+	{F^S S (D)} \&\& {F^S (D)} \&\& {(D, d) } \\
+	\\
+	{Q F^T L S(D)} \&\& {Q F^T L(D)} \&\& QX
+	\arrow["{\epsilon^S_{F^S (D)}}", shift left, from=1-1, to=1-3]
+	\arrow["{F^S (d)}"', shift right, from=1-1, to=1-3]
+	\arrow["d", from=1-3, to=1-5]
+	\arrow["{\varphi_{S(D)}}"', from=1-1, to=3-1]
+	\arrow["{\varphi_D}"', from=1-3, to=3-3]
+	\arrow["{Q \omega_D}", shift left, from=3-1, to=3-3]
+	\arrow["{Q F^T L (d)}"', shift right, from=3-1, to=3-3]
+	\arrow["Qx"', from=3-3, to=3-5]
+	\arrow["\xi", dashed, from=1-5, to=3-5]
+\end{tikzcd}\]
+
+We prove $\xi$ does in fact satisfies the property of the unit arrow (recall in the previous section we had $\varphi = \eta^Q_{F^S}$).
+
+\[\begin{tikzcd}[ampersand replacement=\&]
+	{(D, d)} \&\& {Q(A, a) = (Ra, Ra \circ \lambda_A)}
+	\arrow["y", from=1-1, to=1-3]
+\end{tikzcd}\]
+
+\noindent be given, so that
+
+$$Ra \circ \lambda_A \circ Sy = y \circ d$$
+
+For the sake of intuition, let us again suppose we have a suitable left adjoint $P$ for $Q$. Then one has
+
+\begin{align*}
+    \epsilon^{F^T} \circ F^T \epsilon^L_{U^T} \circ F^T L U^S (y)
+    \\ = \epsilon^{Q} \circ P \epsilon^{F^S}_{Q} \circ F^T L U^S (y) 
+    \\ = \epsilon^{Q} \circ P (y) \circ P \epsilon^S
+    \\ = (y)^\flat \circ P(d)
+\end{align*}
+
+Thus we set
+
+$$\chi = \epsilon^{F^T} \circ F^T \epsilon^L_{U^T} \circ F^T L U^S (y) = a \circ F^T \epsilon^L_{A} \circ F^T L U^S (y) $$
+
+\noindent and verify it equalizes the arrows $\omega_D, F^T L (d)$:
+
+\begin{align*}
+    U^S \left( a \circ F^T \epsilon^L_{U^T} \circ F^T L U^S (y) \circ \epsilon^{F^T}_{F^T L (D)} \circ F^T \delta_{D} \right)
+    \\ = U^S \left( a \circ \epsilon^{F^T}_{F^T U^T} \circ F^T \epsilon^L_{T U^T} \circ F^T L \lambda_{U^T} \circ F^T L S U^S (y) \right) && \text{(First naturality, then expand $\delta$ and triangle identity)}
+    \\ = U^S (a) \circ \mu_A \circ T \epsilon^L_{TA} \circ T L \lambda_A \circ T L S U^S (y)
+\end{align*}
+
+On the other hand
+
+\begin{align*}
+    U^S \left( a \circ F^T \epsilon^L_{U^T} \circ F^T L U^S (y) \circ F^T L (d) \right)
+    \\ = U^S \left( a \circ F^T \epsilon^L_{U^T} \circ F^T L R (a) \circ F^T L \lambda_{U^T} \circ F^T L S U^S (y) \right)
+    \\ = U^S \left( a \circ \mu^T_A \circ F^T \epsilon^L_{TA} \circ F^T L \lambda_A \circ T L S U^S (y) \right)
+\end{align*}
+    
+Hence we have a factorization
+
+\[\begin{tikzcd}[ampersand replacement=\&]
+	{F^T L S (D)} \&\& {F^T L (D)} \&\& X \\
+	\\
+	\&\&\&\& {(A, a)}
+	\arrow["{\omega_D}", shift left, from=1-1, to=1-3]
+	\arrow["{F^T L(d)}"', shift right, from=1-1, to=1-3]
+	\arrow["x", from=1-3, to=1-5]
+	\arrow["\chi"', from=1-3, to=3-5]
+	\arrow["{y^\flat}", dashed, from=1-5, to=3-5]
+\end{tikzcd}\]
+
+We now verify $Q y^\beta \circ \xi \circ d = y \circ d$ (since $d$ is epi):
+
+\begin{align*}
+    U^S \left( y \circ d \right) = R U^T a \circ \lambda_A \circ S U^S (y)
+\end{align*}
+
+\begin{align*}
+    U^S \left( Q y^\flat \circ \xi \circ d \right)
+    \\ = U^S \left( Q \chi \circ \varphi_D \right)
+    \\ = R U^T ( a \circ F^T \epsilon^L_{U^T} \circ F^T L U^S (y) ) \circ \lambda_{L(D)} \circ S \eta^L_{D}
+    \\ = R U^T a \circ \lambda_A \circ S R \epsilon^T_A \circ S \eta^L_{A} \circ S U^S (y)
+    \\ = R U^T a \circ \lambda_A \circ S U^S (y)
+\end{align*}
+
+Furthermore $Q f \circ \xi = Q g \circ \xi \iff Q (f x) \circ \varphi = Q (g x) \circ \varphi$
+
+\noindent but upon expansion this becomes (in transpose notation)
+
+$$U^S \flat^S \#^R \#^T (fx)$$
+
+\noindent hence $fx = gx$ but $x$ is epi.
+
+Packing together everything we've proved thus far, we have:
+
+\begin{theorem}
+    Let $\mathbb{D}$ be a $\mathcal{S}$-complete (resp. cocomplete) category. Then in the canonical $\mathrm{Cat}{(\mathcal{S})}$-indexing of $\mathbb{D}$, the transition functors have right (resp.left) adjoints. In particular, we have limit (colimit) functors $\mathrm{lim}_{\mathbb{C}}: \mathbb{D}^\mathbb{C} \to \mathbb{D}$
+\end{theorem}
+
+\section{Proving the theorem}
+
+The indexed version of generator is pretty intuitive.
+\begin{definition}
+    An object $G \in C^I$ is called a generator if for $A, B \in C^J$, $f \neq g: A \to B$ we have a span
+
+    \[\begin{tikzcd}
+	K && J \\
+	\\
+	I
+	\arrow["x"', from=1-1, to=3-1]
+	\arrow["y", from=1-1, to=1-3]
+    \end{tikzcd}\]
+    
+    \noindent and $h: x^\ast(G) \to y^\ast(A)$ s.t. $y^\ast(f) h \neq y^\ast(g) h$. We also have the dual notion called cogenerator.
+    
+\end{definition}
+
+\begin{lemma}\label{thm:generator-epi-map}
+    Suppose $\mathbb{C}$ is $\mathcal{S}$-cocomplete an locally small. Then $G \in \mathbb{C}^I$ is a separating family iff for every $A \in \mathbb{C}^J$ there's a span 
+
+    
+    \[\begin{tikzcd}
+	K && J \\
+	\\
+	I
+	\arrow["x"', from=1-1, to=3-1]
+	\arrow["y", from=1-1, to=1-3]
+    \end{tikzcd}\]
+
+    \noindent and an epi $e: \Sigma_y x^\ast  (G) \twoheadrightarrow A$.
+\end{lemma}
+\begin{proof}
+    One direction is obvious. Suppose $G$ is a separating family, and let $(v, w): K \to I \times J$ index morphisms $G \to A$ with universal arrow $h$, Now, if $f \neq g$, we have $h^\prime$ s.t. $y^\ast (f) h^\prime \neq y^\ast (g) h^\prime$, but $h^\prime = z^\ast (h)$, where $z$ is s.t. $(x,y) \circ z = (v, w)$, hence $w^\ast (f) h \neq w^\ast (g) h$. But since this holds for any $f, g$, clearly the transpose is epi.
+\end{proof}
+
+
+\begin{definition}[Indexed comma]
+    Let $F: \mathbb{C} \to \mathbb{E}, G: \mathbb{D} \to \mathbb{E}$ be $\mathcal{S}$-indexed functors. Then $F \downarrow G$ is an $\mathcal{S}$-indexed category with
+
+    \begin{enumerate}[i)]
+        \item $\left( F \downarrow G \right)^I = F^I \downarrow G^I$
+
+        \item For $h: F^IA \to G^IB$, $x: J \to I$,
+
+        \[\begin{tikzcd}[ampersand replacement=\&]
+	{F^IA} \&\& {G^IB} \&\& {F^IA} \&\& {F^IB} \\
+	\& \downarrow \&\&\&\& \downarrow \\
+	{x^\ast F^I A} \&\& {x^\ast G^I B} \&\& {F^J x^\ast A} \&\& {F^J x^\ast B} \\
+	{F^J x^\ast A} \&\& {G^J x^\ast B} \\
+	\&\&\&\& {x^\ast F^I A} \&\& {x^\ast F^I B}
+	\arrow["h", from=1-1, to=1-3]
+	\arrow["{x^\ast h}", from=3-1, to=3-3]
+	\arrow["{\phi_G^x}", from=3-3, to=4-3]
+	\arrow["{{\phi_F^x}^{-1}}", from=4-1, to=3-1]
+	\arrow["{F^If}", from=1-5, to=1-7]
+	\arrow["\cong"', from=3-5, to=5-5]
+	\arrow["{F^J x^\ast f}", from=3-5, to=3-7]
+	\arrow["{x^\ast F^If}", from=5-5, to=5-7]
+	\arrow["\cong"', from=5-7, to=3-7]
+\end{tikzcd}\]
+    \end{enumerate}
+\end{definition}
+
+We assume $\mathcal{S}$ is finitely complete for the next results.
+
+The following is tedious but straightforward from the definitions:
+
+\begin{lemma}
+    If $F: \mathbb{C} \to \mathbb{D}$ is $\mathcal{S}$-continuous, the indexed comma category $B \downarrow F$ (where $B \in \mathbb{C}^1$) is $\mathcal{S}$-complete.
+\end{lemma}
+
+
+\begin{lemma}
+    If $\mathbb{C}$ is locally small, $B \downarrow F$ is also locally small.
+\end{lemma}
+\begin{proof}
+    The prime candidate for a generic morphism between the objects comprising the span
+
+    \[\begin{tikzcd}[ampersand replacement=\&]
+	{I^\ast B} \& {F^I Y} \\
+	{F^I X}
+	\arrow["f"', from=1-1, to=2-1]
+	\arrow["g", from=1-1, to=1-2]
+\end{tikzcd}\]
+
+    \noindent would be $F^I h$, where $h$ is generic for morphisms $X \to Y$ and we have $d: J \to I \times I$. The problem is that the corresponding triangle needn't commute. Therefore we use \ref{thm:locally-small-def-eq-inv} i), since we are assuming $\mathcal{S}$ is cartesian, we take $z: K \rightarrowtail J$ generic w.rt. making the triangle commute. Then $d \circ z$ is the desired indexing morphism.
+\end{proof}
+
+\begin{lemma}
+    If $\mathbb{C}$ is well-powered and $F$ is continuous, $B \downarrow F$ is also well-powered.
+\end{lemma}
+\begin{proof}
+    We want a morphism generic for subobjects of $X$ for which $f: I^\ast B \to F^I X$ factors through $F^I A \rightarrowtail F^I X$. Let $m: A \to m^\ast X$ be the generic suboject with $x: J \to I$ indexing. We take the pullback
+
+    \[\begin{tikzcd}[ampersand replacement=\&]
+	D \&\& {F^I A} \\
+	\\
+	{J^\ast B} \&\& {F^J x^\ast X}
+	\arrow[from=3-1, to=3-3]
+	\arrow[tail, from=1-3, to=3-3]
+	\arrow["h"', from=1-1, to=3-1]
+	\arrow[from=1-1, to=1-3]
+	\arrow["\lrcorner"{anchor=center, pos=0.125}, draw=none, from=1-1, to=3-3]
+\end{tikzcd}\]
+    
+    \noindent and then use the fact invertibility is definable in $\mathbb{D}$ bt \ref{thm:locally-small-def-eq-inv} ii), to get a morphism $z: K \rightarrowtail J$ universal for morphisms which take $h$ to an iso. Then  $x \circ z:K \to I$ is the desired indexing map.
+\end{proof}
+
+
+We also have:
+
+\begin{comment}
+\begin{lemma}
+    Suppose $\mathbb{C}$ is $\mathcal{S}$-cocomplete and locally small. Then $G \in \mathcal{C}^I$ is a generator
+\end{lemma}
+\end{comment}
+
+\begin{theorem}
+    If $\mathbb{C}$ admits a cogenerator object, so does $F \downarrow B$.
+\end{theorem}
+\begin{proof}
+    The proof is quite analogous to the non-indexed case. Let $G$ be the generator and let $k: J^\ast B \to x^\ast F^I G$ be a generic arrow for morphisms $B \to F^I G$. We wish to prove $J^\ast B \to x^\ast F^I X \cong F^J x^\ast X$ is the desired generator object. Let us have two different arrows
+
+    \[\begin{tikzcd}[ampersand replacement=\&]
+	\& {F^K X} \\
+	{K^\ast B} \\
+	\& {F^K Y}
+	\arrow["a", from=2-1, to=1-2]
+	\arrow["b"', from=2-1, to=3-2]
+	\arrow["{F^K f}"', shift right=2, from=1-2, to=3-2]
+	\arrow["{F^K g}", shift left=2, from=1-2, to=3-2]
+\end{tikzcd}\]
+
+Then we have
+
+\[\begin{tikzcd}[ampersand replacement=\&]
+	L \&\& K \\
+	\\
+	J
+	\arrow["x"', from=1-1, to=3-1]
+	\arrow["y", from=1-1, to=1-3]
+\end{tikzcd}\]
+
+and $h: y^\ast Y \to x^\ast G$ s.t. $h y^\ast (f) \neq h y^\ast (g)$. Thus we have a morphism
+
+\[\begin{tikzcd}[ampersand replacement=\&]
+	\&\& {F^K y^\ast Y} \\
+	{L^\ast B} \\
+	\&\& {F^K x^\ast G}
+	\arrow["{y^\ast b}", from=2-1, to=1-3]
+	\arrow["{F^K h}", from=1-3, to=3-3]
+	\arrow["{u^\ast k}"', from=2-1, to=3-3]
+\end{tikzcd}\]
+
+\noindent (modulo coherence isos).
+
+\end{proof}
+
+Before moving on to the first big proof, we need some lemmas:
+
+\begin{lemma}
+    Let $\mathbb{D}$ be an internal category with a weakly terminal object (non-uniqueness). Then $\mathbb{D}$ is connected, that is,
+
+    \[\begin{tikzcd}[ampersand replacement=\&]
+	{D_1} \&\& {D_0} \&\& {\pi_0(\mathbb{D}) = 1}
+	\arrow["{d_0}", shift left, from=1-1, to=1-3]
+	\arrow["{d_1}"', shift right, from=1-1, to=1-3]
+	\arrow[two heads, from=1-3, to=1-5]
+\end{tikzcd}\]
+\end{lemma}
+\begin{proof}
+    Having a weakly terminal object means
+
+    \[\begin{tikzcd}[ampersand replacement=\&]
+	{C_1} \&\& {C_0 \times C_0} \\
+	\\
+	\&\& X
+	\arrow["{(x, \top)}", from=3-3, to=1-3]
+	\arrow["\exists", dashed, from=3-3, to=1-1]
+	\arrow[from=1-1, to=1-3]
+\end{tikzcd}\]
+
+ But then the coequalizer arrow equalizes $x$ and $\top$, meaning this is the unique such arrow, which always exists, so $\pi_0(\mathbb{D})$ is terminal.
+\end{proof}
+
+\begin{theorem}
+    Let $\mathbb{D}$ be a connected internal category in $\mathcal{S}$ which admits an arrow $1 \to D_0$, and $\mathbb{C}$ an $\mathcal{S}$-indexed locally small category. Then the constant diagram functor $\mathbb{D}^\ast: \mathbb{C} \to \mathbb{C}^\mathbb{D}$ is fully faithful.
+\end{theorem}
+\begin{proof}
+    Faithfulness is straightforward.
+
+    Let $f: D_0^\ast A \to D_0^\ast B$. Let $g: J^\ast A \to J^\ast B$ classify morphisms $A \to B$. Then we have $f \cong u^\ast (g)$, but since $d_0^\ast(f) = d_1^\ast(f)$ (as the constant diagrams have identities for maps), we have that $u d_0 = u d_1$, inducing, by connectedness, a factorization $u = x \circ \top_{D_0}$, but then we just proved $f = Q_0^\ast (x^\ast (g) )$. We leave it to the reader to parse this statement in light of the existence of coherence isos, but we promise everything works out.
+\end{proof}
+
+\begin{theorem}[The special indexed initial object theorem]
+    Let $\mathcal{S}$ be cartesian. Let $\mathbb{C}$ be complete, locally small, well-powered and with a cogenerator. Then $\mathbb{C}$ has an indexed initial object.
+\end{theorem}
+\begin{proof}
+    Let us first recall the non-indexed version: the desired initial object is the intersection of all the subobjects of the product of such cogenerating family.
+    
+    It suffices to prove it for $\mathcal{C}^1$. Let $m: Y \to U^\ast(X)$ be the generic subobject of $X = \Pi_I (G)$. Now, we take the intersection
+    
+    \[\begin{tikzcd}[ampersand replacement=\&]
+	{\pi_1^\ast (Y) \cap \pi_2^\ast (Y)} \&\& {\pi_1^\ast (Y)} \\
+	\\
+	{\pi_2^\ast (Y)} \&\& {{U \times U}^\ast (X)}
+	\arrow["{\pi_2^\ast (m) = b}"', from=3-1, to=3-3]
+	\arrow["{\pi_1^\ast (m) = a}", from=1-3, to=3-3]
+	\arrow[from=1-1, to=3-1]
+	\arrow[from=1-1, to=1-3]
+	\arrow["{a \cap b = z^\ast(m)}", from=1-1, to=3-3]
+    \end{tikzcd}\]
+
+    \noindent which is again classified by some map $z: U \times U \to U$. Then we take the equalizer
+
+    \[\begin{tikzcd}[ampersand replacement=\&]
+	{U_1} \&\& {U \times U} \&\& U
+	\arrow["z", shift left, from=1-3, to=1-5]
+	\arrow["{\pi_1}"', shift right, from=1-3, to=1-5]
+	\arrow["h", tail, from=1-1, to=1-3]
+    \end{tikzcd}\]
+
+    If the reader is looking for intuition, consider again the naive $\mathrm{Set}$-indexing: $z$ is the intersection map in $U = \mathrm{Sub}(A)$, and $U_1$ is precisely the subset representing the relation $\leq$. We thus have a category $\mathbb{U}$ with $d_0 = \pi_1 h, d_1 = p_2 h$. In fact, it is an internal poset since $h$ is mono.
+
+    Now, consider the following diagram structure $(Y, \Phi)$ on $\mathbb{C}^\mathbb{U}$: $\Phi = (h \pi_1)^\ast (Y) \to (h \pi^2)^\ast (Y)$ is precisely the image under $h^\ast$ of the left leg on the intersection pullback, which $h$ collapses to a triangle.
+    Furthermore, consider the constant diagram on $X$,  $\mathbb{U}^\ast X$. Then the universal mono $m: Y \to U^\ast (X)$ induces a morphism of diagrams $(Y, \Phi) \rightarrowtail \mathbb{U}^\ast X$, which is again mono because the forgetful functor on diagrams is faithful. Then we pass the limit functor $\mathrm{lim}_\mathbb{U}$ on this arrow, which is a right adjoint and gives us a mono arrow $B \rightarrowtail A$.
+
+    Now, by the results above, we have $A \cong X$, so we actually have an arrow $k: B \rightarrowtail X$. Furthermore, consider the unit $\eta: 1 \implies \Pi_{U \to \mathbb{U}} (U \to \mathbb{U})^\ast$. It is clearly mono since $(U \to \mathbb{U})^\ast$ is clearly faithful, which means we obtain a a mono arrow $h = \mathrm{lim}_{\mathbb{U}} \eta_{(Y, \Phi)}: B = \mathrm{lim}_{\mathbb{U}}(Y, \Phi) \to \Pi_U (Y)$ (intuitively this expresses the limit as a subobject of the product).
+
+    Now, if we take the transpose $h^\prime: U^\ast(B) \to Y$, we have the following commutative diagram
+
+    \[\begin{tikzcd}[ampersand replacement=\&]
+	{U^\ast(B)} \&\& Y \\
+	\\
+	\&\& {U^\ast(X)}
+	\arrow["{U^\ast (k)}"', from=1-1, to=3-3]
+	\arrow["{h^\prime}", from=1-1, to=1-3]
+	\arrow["m", from=1-3, to=3-3]
+    \end{tikzcd}\]
+    
+    \noindent since (we omit coherence isos and write $[m]$ for the induced arrow in $\mathbb{C}^\mathbb{U}$, $I$ for the functor $U_0 \to \mathbb{U}$):
+
+    $$k = {\eta^{\mathbb{U}}}^{-1}_{X} \circ \mathrm{lim}_{\mathbb{U}}{([m])}$$
+
+    \begin{align*}
+        m \circ h^\prime
+        \\ = I^\ast ([m]) \circ \epsilon^U \circ U^\ast \mathrm{lim}_{\mathbb{U}} \eta^{I}_Y
+        \\ = \epsilon^U_{U^\ast} \circ U^\ast \mathrm{lim}_{\mathbb{U}} \Pi_I I^\ast ([m]) \circ U^\ast \mathrm{lim}_{\mathbb{U}} \eta^{I}_Y
+        \\ = \epsilon^U_{U^\ast} \circ  U^\ast \mathrm{lim}_{\mathbb{U}} \eta^{I}_{\mathbb{U}^\ast X} \circ {\eta^{\mathbb{U}}}_{X} \circ {\eta^{\mathbb{U}}}^{-1}_{X} \circ \mathrm{lim}_{\mathbb{U}}{([m])}
+        \\ = {\eta^{\mathbb{U}}}^{-1}_{X} \circ \mathrm{lim}_{\mathbb{U}}{([m])} = k
+    \end{align*}
+
+    Therefore we conclude $k: B \rightarrowtail X$ is in fact the minimal subobject.  We now prove that $B$ is indeed the desired initial object of $\mathbb{C}^1$. Let $C \in \mathbb{C}^1$. Then by the dual of Lemma \ref{thm:generator-epi-map}, we have $x: J \to I$ and a mono $C \rightarrowtail \Pi_J x^\ast (G)$. Since, $\Pi_J \cong \Pi_I \Pi_x$, we form the pullback
+
+    \[\begin{tikzcd}[ampersand replacement=\&]
+	B \\
+	U \&\& {\Pi_I(G) = X} \\
+	\\
+	C \&\& {\Pi_J x^\ast(G)}
+	\arrow["{\Pi_I \eta^x_G}", from=2-3, to=4-3]
+	\arrow[tail, from=4-1, to=4-3]
+	\arrow[from=2-1, to=4-1]
+	\arrow[tail, from=2-1, to=2-3]
+	\arrow[tail, from=1-1, to=2-1]
+	\arrow[from=1-1, to=2-3]
+	\arrow["\lrcorner"{anchor=center, pos=0.125}, draw=none, from=2-1, to=4-3]
+\end{tikzcd}\]
+
+    Furthermore, clearly any coequalizer from $B$ must be an isomorphism by minimality, hence $B$ is in fact an initial object.
+\end{proof}
+
+Finally we can prove the desired theorem, but first we need another useful lemma.
+
+\begin{lemma}
+    Let $\mathcal{S}$ have finite products. Then the change of base functor $\Sigma_I^\ast: \mathrm{Cat}_\mathcal{S} \to \mathrm{Cat}_\mathcal{S /I}$ preserves the property of having a (co) generator.
+\end{lemma}
+\begin{proof}
+    Let $G \in \mathbb{C}^J$. We prove that $\pi_J^\ast (G)$ is the desired generator in the new category. Let $f \neq g$ in $\mathbb{C}^U, u: U \to I$. Then we have
+
+    \[\begin{tikzcd}[ampersand replacement=\&]
+	K \&\& U \&\& K \&\& {J \times I} \\
+	\&\&\& \rightarrow \\
+	J \&\&\&\& U \&\& I
+	\arrow["{\pi_I}", from=1-7, to=3-7]
+	\arrow["u"', from=3-5, to=3-7]
+	\arrow["x"', from=1-1, to=3-1]
+	\arrow["y", from=1-1, to=1-3]
+	\arrow["{(x, uy)}", from=1-5, to=1-7]
+	\arrow[from=1-5, to=3-5]
+	\arrow["uy"', from=1-5, to=3-7]
+\end{tikzcd}\]
+\end{proof}
+
+Furthermore, such operation clearly preserves the other properties we need.
+
+\begin{theorem}[The special indexed adjoint functor theorem]
+    Let $\mathbb{S}$ be cartesian, and $\mathbb{C}, \mathbb{D}$ $\mathcal{S}$-indexed categories which are locally small and complete, and $\mathbb{C}$ $\mathcal{S}$-complete. Then $F: \mathbb{C} \to \mathbb{D}$ has a left adjoint iff it is continuous.
+\end{theorem}
+\begin{proof}
+    We apply the previous theorem on each instance $B \downarrow F$, so that we may construct $H^1 \dashv F^1$. Furthermore, we can apply chance-of-base on the previous lemma to consider categories $B \downarrow F$ where $B \in \mathbb{D}^I$ originally. Now, we have $H^I \dashv F^I$ componentwise, but we need an \textbf{indexed} adjunction. To this end, we invoke the observation on section 5 that it suffices for the mate of $F^x$ to be invertible, but this follows easily from $\mathcal{S}$-continuity if we take all left adjoints of the mate (see Definition \ref{def:indexed-continuous-functor}).
+\end{proof}
+
+\nocite{*}
+\printbibliography
+
+\end{document}
